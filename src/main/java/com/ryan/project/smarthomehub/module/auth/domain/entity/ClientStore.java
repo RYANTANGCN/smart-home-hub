@@ -1,10 +1,7 @@
 package com.ryan.project.smarthomehub.module.auth.domain.entity;
 
-import org.apache.tomcat.jni.Local;
-
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
