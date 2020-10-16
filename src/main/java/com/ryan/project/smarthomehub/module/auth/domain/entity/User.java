@@ -26,7 +26,7 @@ public class User {
 
     private String password;
 
-    private boolean isEnable;
+    private boolean isEnabled;
 
     private LocalDateTime createTime;
 
