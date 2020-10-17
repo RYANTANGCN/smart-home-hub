@@ -4,6 +4,7 @@ import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.digest.DigestAlgorithm;
 import cn.hutool.crypto.digest.Digester;
+import com.ryan.project.smarthomehub.config.properties.HubProperties;
 import com.ryan.project.smarthomehub.module.auth.dao.UserDao;
 import com.ryan.project.smarthomehub.module.auth.domain.entity.User;
 import com.ryan.project.smarthomehub.module.auth.domain.vo.LoginInVO;
@@ -27,9 +28,8 @@ import java.util.concurrent.TimeUnit;
 @RestController
 public class AuthController {
 
-    private String projectId;
-
-    private String SSO_URL = "https://sso.ryantang.org/login";
+    @Autowired
+    HubProperties hubProperties;
 
     @Autowired
     RedisTemplate<String, String> redisTemplate;
@@ -59,14 +59,14 @@ public class AuthController {
         }
 
         //valid redirect url
-        String redirectUrlPrefix1 = String.format("https://oauth-redirect.googleusercontent.com/r/%s", projectId);
-        String redirectUrlPrefix2 = String.format("https://oauth-redirect-sandbox.googleusercontent.com/r/", projectId);
+        String redirectUrlPrefix1 = String.format("https://oauth-redirect.googleusercontent.com/r/%s", hubProperties.getProjectId());
+        String redirectUrlPrefix2 = String.format("https://oauth-redirect-sandbox.googleusercontent.com/r/%s", hubProperties.getProjectId());
         if ((!redirectUri.startsWith(redirectUrlPrefix1)) || (!redirectUri.startsWith(redirectUrlPrefix2))) {
             return ResponseEntity.badRequest().build();
         }
 
         //generate login page redirect url
-        String loginPageUrl = String.format(SSO_URL + "?client_id=%s&redirect_uri=%s&state=%s&scope=%s&response_type=code&user_locale=%s", clientId, redirectUri, state, scope, userLocale);
+        String loginPageUrl = String.format(hubProperties.getSsoUrl() + "?client_id=%s&redirect_uri=%s&state=%s&scope=%s&response_type=code&user_locale=%s", clientId, redirectUri, state, scope, userLocale);
         log.debug("redirect to login page:{}", loginPageUrl);
 
         return ResponseEntity.status(HttpStatus.FOUND).header("Location", loginPageUrl).build();

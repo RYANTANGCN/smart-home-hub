@@ -1,13 +1,12 @@
 spring:
   datasource:
-#    hikari:
-#      jdbc-url: jdbc:mysql://${MYSQL_HOST}/smart_home_hub?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8&useSSL=false
-#      username: root
-#      password: ${MYSQL_PASSWORD}
     url: jdbc:mysql://${MYSQL_HOST}/smart_home_hub?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8&useSSL=false
     username: ${MYSQL_USERNAME}
     password: ${MYSQL_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
+smart-home-hub:
+  projectId: ${PROJECT_ID}
+  ssoUrl: ${SSO_URL}
 logging:
   level:
     root: info
