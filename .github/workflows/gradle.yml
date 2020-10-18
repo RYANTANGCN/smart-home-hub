@@ -32,7 +32,7 @@ jobs:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
     - name: show path
-      run: pwd && tree /home/runner/work/smart-home-hub
+      run: pwd && echo $GITHUB_WORKSPACE && apt-get install tree && tree .
     - name: Build and push
       id: docker_build
       uses: docker/build-push-action@v2
