@@ -38,7 +38,6 @@ jobs:
       uses: docker/build-push-action@v1
       with:
         push: true
-        file: ./Dockerfile
         tags: ryantang/smart-home-hub:latest
     - name: Image digest
       run: echo ${{ steps.docker_build.outputs.digest }}
