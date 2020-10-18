@@ -33,11 +33,5 @@ jobs:
         password: ${{ secrets.DOCKERHUB_TOKEN }}
     - name: show path
       run: pwd && echo $GITHUB_WORKSPACE && ls -l && sudo apt-get install tree && tree .
-    - name: Build and push
-      id: docker_build
-      uses: docker/build-push-action@v1
-      with:
-        push: true
-        tags: ryantang/smart-home-hub:latest
     - name: Image digest
       run: echo ${{ steps.docker_build.outputs.digest }}
