@@ -10,4 +10,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
  */
 public interface TokenStoreDao extends JpaRepository<TokenStore, Integer> {
 
+    TokenStore getTokenStoreByClientIdAndRefreshToken(String clientId, String refreshToken);
+
 }

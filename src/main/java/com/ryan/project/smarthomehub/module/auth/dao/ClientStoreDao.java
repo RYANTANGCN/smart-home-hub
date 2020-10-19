@@ -7,5 +7,7 @@ public interface ClientStoreDao extends JpaRepository<ClientStore, Integer> {
 
     int countByClientId(String clientId);
 
+    ClientStore getClientStoreByClientIdAndClientSecret(String clientId, String clientSecret);
+
     ClientStore getClientStoreByClientId(String clientId);
 }

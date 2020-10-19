@@ -2,7 +2,9 @@ package com.ryan.project.smarthomehub.module.auth.service.impl;
 
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.crypto.digest.DigestUtil;
+import com.ryan.project.smarthomehub.exception.GrantException;
 import com.ryan.project.smarthomehub.module.auth.dao.TokenStoreDao;
+import com.ryan.project.smarthomehub.module.auth.domain.entity.ClientStore;
 import com.ryan.project.smarthomehub.module.auth.domain.entity.TokenStore;
 import com.ryan.project.smarthomehub.module.auth.domain.vo.TokenInVo;
 import com.ryan.project.smarthomehub.module.auth.domain.vo.TokenOutVo;
@@ -46,17 +48,14 @@ public class TokenServiceImpl implements ITokenService {
         String refreshToken = DigestUtil.sha256Hex(IdUtil.simpleUUID());
         tokenStoreDao.save(TokenStore.builder()
                 .clientId(tokenInVo.getClient_id())
+                .userOpenId(userId)
                 .refreshToken(refreshToken)
                 .expiredTime(LocalDateTime.MAX)
                 .isRevoke(false)
                 .build());
 
         //generate access token
-        String accessToken = IdUtil.simpleUUID();
-        String key = String.format("ACCESS_TOKEN:%s", accessToken);
-        stringRedisTemplate.opsForHash().put(key, "client_id", tokenInVo.getClient_id());
-        stringRedisTemplate.opsForHash().put(key, "user_id", userId);
-        stringRedisTemplate.expire(key, Duration.ofMinutes(65L));
+        String accessToken = generateRefreshToken(tokenInVo.getClient_id(), userId);
 
         return TokenOutVo.builder()
                 .token_type("Bearer")
@@ -68,6 +67,37 @@ public class TokenServiceImpl implements ITokenService {
 
     @Override
     public TokenOutVo grantAccessToken(TokenInVo tokenInVo) {
-        return null;
+
+        //valid client_id and client_secret
+        ClientStore clientStore = clientStoreService.getClientStoreByClientIdAndClientSecret(tokenInVo.getClient_id(), tokenInVo.getClient_secret());
+        if (clientStore == null) {
+            throw new GrantException();
+        }
+
+        //valid refresh token
+        TokenStore tokenStore = tokenStoreDao.getTokenStoreByClientIdAndRefreshToken(clientStore.getClientId(), tokenInVo.getRefresh_token());
+        if (tokenStore == null || tokenStore.getIsRevoke()) {
+            throw new GrantException();
+        }
+
+        //generate access token
+        String accessToken = generateRefreshToken(tokenInVo.getClient_id(), tokenStore.getUserOpenId());
+
+        return TokenOutVo.builder()
+                .token_type("Bearer")
+                .access_token(accessToken)
+                .refresh_token("")
+                .expires_in(3600)
+                .build();
+    }
+
+    private String generateRefreshToken(String clientId, String userId) {
+        String accessToken = IdUtil.simpleUUID();
+        String key = String.format("ACCESS_TOKEN:%s", accessToken);
+        stringRedisTemplate.opsForHash().put(key, "client_id", clientId);
+        stringRedisTemplate.opsForHash().put(key, "user_id", userId);
+        stringRedisTemplate.expire(key, Duration.ofMinutes(65L));
+
+        return accessToken;
     }
 }

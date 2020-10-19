@@ -30,6 +30,8 @@ public class TokenStore {
 
     private String refreshToken;
 
+    private String userOpenId;
+
     private LocalDateTime expiredTime;
 
     private Boolean isRevoke;

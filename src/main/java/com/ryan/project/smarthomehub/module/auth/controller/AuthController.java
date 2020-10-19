@@ -4,6 +4,7 @@ import cn.hutool.core.util.StrUtil;
 import com.ryan.project.smarthomehub.config.properties.HubProperties;
 import com.ryan.project.smarthomehub.exception.GrantException;
 import com.ryan.project.smarthomehub.module.auth.dao.UserDao;
+import com.ryan.project.smarthomehub.module.auth.domain.entity.User;
 import com.ryan.project.smarthomehub.module.auth.domain.vo.LoginInVO;
 import com.ryan.project.smarthomehub.module.auth.domain.vo.TokenInVo;
 import com.ryan.project.smarthomehub.module.auth.domain.vo.TokenOutVo;
@@ -97,12 +98,13 @@ public class AuthController {
         }
 
         //valid username password
-        if (!authService.login(loginInVO.getUsername(), loginInVO.getPassword())) {
+        User user = authService.login(loginInVO.getUsername(), loginInVO.getPassword());
+        if (user==null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("");
         }
 
         //Generate Auth Code
-        String authCode = authService.generateAuthCode(loginInVO.getClientId());
+        String authCode = authService.generateAuthCode(loginInVO.getClientId(),user);
 
         return ResponseEntity.ok(authCode);
     }

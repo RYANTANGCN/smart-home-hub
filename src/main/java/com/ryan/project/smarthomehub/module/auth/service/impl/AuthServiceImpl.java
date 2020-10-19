@@ -6,7 +6,6 @@ import cn.hutool.crypto.digest.DigestAlgorithm;
 import cn.hutool.crypto.digest.Digester;
 import com.ryan.project.smarthomehub.exception.GrantException;
 import com.ryan.project.smarthomehub.module.auth.dao.UserDao;
-import com.ryan.project.smarthomehub.module.auth.domain.entity.ClientStore;
 import com.ryan.project.smarthomehub.module.auth.domain.entity.User;
 import com.ryan.project.smarthomehub.module.auth.domain.vo.TokenInVo;
 import com.ryan.project.smarthomehub.module.auth.service.IAuthService;
@@ -65,6 +64,7 @@ public class AuthServiceImpl implements IAuthService {
      */
     @Override
     public String validAuthCode(TokenInVo tokenInVo) {
+
         //valid auth code
         String authCodeKey = String.format("AUTH_CODE:", tokenInVo.getCode());
         if (!stringRedisTemplate.hasKey(authCodeKey)) {
@@ -73,22 +73,18 @@ public class AuthServiceImpl implements IAuthService {
         }
         String userId = (String) stringRedisTemplate.opsForHash().get(authCodeKey, "user_id");
         String clientId = (String) stringRedisTemplate.opsForHash().get(authCodeKey, "client_id");
+
+        //valid client_id is match
         if (StrUtil.hasBlank(userId, clientId) || (!clientId.equals(tokenInVo.getClient_id()))) {
-            //TODO auth code expired or not match
+            //auth code expired or not match
             throw new GrantException();
         }
 
-        //valid client id
-        if (!clientStoreService.validateClientId(tokenInVo.getClient_id())) {
-            //TODO exception
-            throw new GrantException();
-        }
-        //TODO validate client secret
-        ClientStore clientStore = clientStoreService.getClientStoreByClientId(clientId);
-        if (!clientStore.getClientSecret().equals(tokenInVo.getClient_secret())) {
+        //valid client id and client secret
+        if (clientStoreService.getClientStoreByClientIdAndClientSecret(tokenInVo.getClient_id(), tokenInVo.getClient_secret())==null) {
             throw new GrantException();
         }
 
-        return clientId;
+        return userId;
     }
 }

@@ -14,14 +14,23 @@ public class ClientStoreServiceImpl implements IClientStoreService {
 
     @Override
     public boolean validateClientId(String clientId) {
-        if (clientStoreDao.countByClientId(clientId)==0){
+        if (clientStoreDao.countByClientId(clientId) == 0) {
             return true;
         }
         return false;
     }
 
+    /*@Override
+    public boolean validateClientIdAndClientSecret(String clientId, String clientSecret) {
+        if (clientStoreDao.getClientStoreByClientIdAndClientSecret(clientId, clientSecret) != null) {
+            return true;
+        }
+        return false;
+    }*/
+
     @Override
-    public ClientStore getClientStoreByClientId(String clientId) {
-        return clientStoreDao.getClientStoreByClientId(clientId);
+    public ClientStore getClientStoreByClientIdAndClientSecret(String clientId, String clientSecret) {
+        return clientStoreDao.getClientStoreByClientIdAndClientSecret(clientId, clientSecret);
     }
+
 }
