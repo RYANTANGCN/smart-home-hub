@@ -32,6 +32,6 @@ jobs:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
     - name: show path
-      run: pwd && echo $GITHUB_WORKSPACE && ls -l && sudo apt-get install tree && tree .
+      run: pwd && echo $GITHUB_WORKSPACE && ls -l && sudo apt-get install tree && tree . && docker build -t ryantang/smart-home-hub .
     - name: Image digest
       run: echo ${{ steps.docker_build.outputs.digest }}
