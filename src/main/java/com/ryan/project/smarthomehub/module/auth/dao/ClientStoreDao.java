@@ -6,4 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface ClientStoreDao extends JpaRepository<ClientStore, Integer> {
 
     int countByClientId(String clientId);
+
+    ClientStore getClientStoreByClientId(String clientId);
 }

@@ -1,6 +1,9 @@
 package com.ryan.project.smarthomehub.module.auth.domain.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -13,6 +16,9 @@ import java.time.LocalDateTime;
  * @Author ryan
  */
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 public class TokenStore {
 
@@ -20,7 +26,7 @@ public class TokenStore {
     @GeneratedValue
     private Integer id;
 
-    private Integer clientId;
+    private String clientId;
 
     private String refreshToken;
 
