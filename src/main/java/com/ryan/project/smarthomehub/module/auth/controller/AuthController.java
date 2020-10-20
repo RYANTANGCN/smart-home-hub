@@ -74,7 +74,7 @@ public class AuthController {
         //valid redirect_url
         String redirectUrlPrefix1 = String.format("https://oauth-redirect.googleusercontent.com/r/%s", hubProperties.getProjectId());
         String redirectUrlPrefix2 = String.format("https://oauth-redirect-sandbox.googleusercontent.com/r/%s", hubProperties.getProjectId());
-        if ((!redirectUri.startsWith(redirectUrlPrefix1)) || (!redirectUri.startsWith(redirectUrlPrefix2))) {
+        if ((!redirectUri.startsWith(redirectUrlPrefix1)) && (!redirectUri.startsWith(redirectUrlPrefix2))) {
             return ResponseEntity.badRequest().build();
         }
 
