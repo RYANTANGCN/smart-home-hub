@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import java.time.LocalDateTime;
 
@@ -23,7 +24,7 @@ import java.time.LocalDateTime;
 public class TokenStore {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     private String clientId;
@@ -39,5 +40,9 @@ public class TokenStore {
     private String name;
 
     private String remark;
+
+    private LocalDateTime createTime;
+
+    private LocalDateTime updateTime;
 
 }
