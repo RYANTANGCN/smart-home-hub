@@ -24,4 +24,11 @@ public interface ITokenService {
      */
     TokenOutVo grantAccessToken(TokenInVo tokenInVo);
 
+    /**
+     * get userId from access token
+     * @param accessToken
+     * @return
+     */
+    String getUserOpenId(String accessToken);
+
 }

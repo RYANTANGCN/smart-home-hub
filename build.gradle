@@ -24,6 +24,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     // https://mvnrepository.com/artifact/mysql/mysql-connector-java
     compile group: 'mysql', name: 'mysql-connector-java', version: '8.0.21'
+    compile group: 'com.google.actions', name: 'actions-on-google', version: '1.8.0'
     compile 'cn.hutool:hutool-all:5.4.4'
 
     compileOnly 'org.projectlombok:lombok'

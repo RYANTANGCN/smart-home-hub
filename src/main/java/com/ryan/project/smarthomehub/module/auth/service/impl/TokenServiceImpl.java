@@ -1,6 +1,7 @@
 package com.ryan.project.smarthomehub.module.auth.service.impl;
 
 import cn.hutool.core.util.IdUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.digest.DigestUtil;
 import com.ryan.project.smarthomehub.exception.GrantException;
 import com.ryan.project.smarthomehub.module.auth.dao.TokenStoreDao;
@@ -89,6 +90,19 @@ public class TokenServiceImpl implements ITokenService {
                 .refresh_token("")
                 .expires_in(3600)
                 .build();
+    }
+
+    @Override
+    public String getUserOpenId(String accessToken) {
+        if (StrUtil.isBlank(accessToken)) {
+            throw new GrantException();
+        }
+        if (accessToken.startsWith("Bearer")) {
+            accessToken = accessToken.substring(7);
+        }
+        String key = String.format("ACCESS_TOKEN:%s", accessToken);
+        String clientId = (String)stringRedisTemplate.opsForHash().get(key, "client_id");
+        return clientId;
     }
 
     private String generateRefreshToken(String clientId, String userId) {
