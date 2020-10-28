@@ -1,6 +1,6 @@
-package com.ryan.project.smarthomehub.module.hub.controller;
+package com.ryan.project.smarthomehub.module.fullfillment.controller;
 
-import com.ryan.project.smarthomehub.module.hub.service.ActionApp;
+import com.ryan.project.smarthomehub.module.fullfillment.service.ActionApp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;

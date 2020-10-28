@@ -12,6 +12,7 @@ import com.ryan.project.smarthomehub.module.auth.domain.vo.TokenOutVo;
 import com.ryan.project.smarthomehub.module.auth.service.IAuthService;
 import com.ryan.project.smarthomehub.module.auth.service.IClientStoreService;
 import com.ryan.project.smarthomehub.module.auth.service.ITokenService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,7 @@ import java.time.LocalDateTime;
  * @Date 2020/10/19
  * @Author tangqianli
  */
+@Slf4j
 @Service
 public class TokenServiceImpl implements ITokenService {
 
@@ -107,7 +109,9 @@ public class TokenServiceImpl implements ITokenService {
 
     private String generateRefreshToken(String clientId, String userId) {
         String accessToken = IdUtil.simpleUUID();
+        log.debug("generate access token:{}",accessToken);
         String key = String.format("ACCESS_TOKEN:%s", accessToken);
+        log.debug("redis access_token key:{}",key);
         stringRedisTemplate.opsForHash().put(key, "client_id", clientId);
         stringRedisTemplate.opsForHash().put(key, "user_id", userId);
         stringRedisTemplate.expire(key, Duration.ofMinutes(65L));

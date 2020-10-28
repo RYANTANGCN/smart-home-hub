@@ -1,4 +1,4 @@
-package com.ryan.project.smarthomehub.module.hub.service;
+package com.ryan.project.smarthomehub.module.fullfillment.service;
 
 import com.google.actions.api.smarthome.*;
 import com.ryan.project.smarthomehub.module.auth.service.ITokenService;
