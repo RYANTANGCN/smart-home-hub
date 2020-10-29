@@ -126,7 +126,7 @@ public class AuthController {
                 tokenOutVo = tokenService.processAuthorizationCode(tokenInVo);
                 break;
             case "refresh_token":
-                tokenService.processRefreshToken(tokenInVo);
+                tokenOutVo = tokenService.processRefreshToken(tokenInVo);
             default:
                 //TODO
                 throw new GrantException();

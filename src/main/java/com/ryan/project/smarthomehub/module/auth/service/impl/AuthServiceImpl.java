@@ -66,7 +66,7 @@ public class AuthServiceImpl implements IAuthService {
     public String validAuthCode(TokenInVo tokenInVo) {
 
         //valid auth code
-        String authCodeKey = String.format("AUTH_CODE:", tokenInVo.getCode());
+        String authCodeKey = String.format("AUTH_CODE:%s", tokenInVo.getCode());
         if (!stringRedisTemplate.hasKey(authCodeKey)) {
             //auth code expired
             throw new GrantException();
