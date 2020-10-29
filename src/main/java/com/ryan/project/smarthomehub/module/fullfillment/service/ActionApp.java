@@ -1,7 +1,9 @@
 package com.ryan.project.smarthomehub.module.fullfillment.service;
 
 import com.google.actions.api.smarthome.*;
+import com.google.gson.Gson;
 import com.ryan.project.smarthomehub.module.auth.service.ITokenService;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,7 @@ import java.util.Map;
  * @Date 2020/10/28
  * @Author tangqianli
  */
+@Slf4j
 @Service
 public class ActionApp extends SmartHomeApp {
 
@@ -24,6 +27,9 @@ public class ActionApp extends SmartHomeApp {
     @Override
     public SyncResponse onSync(@NotNull SyncRequest syncRequest, @Nullable Map<?, ?> map) {
 
+        Gson gson = new Gson();
+
+        log.debug("headers:{}", gson.toJson(map));
         //get userId
         String accessToken = (String) map.get("Authorization");
         String userId = tokenService.getUserOpenId(accessToken);

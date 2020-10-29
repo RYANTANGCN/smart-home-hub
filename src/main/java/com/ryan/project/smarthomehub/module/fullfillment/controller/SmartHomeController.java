@@ -1,6 +1,7 @@
 package com.ryan.project.smarthomehub.module.fullfillment.controller;
 
 import com.ryan.project.smarthomehub.module.fullfillment.service.ActionApp;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,6 +16,7 @@ import java.util.stream.Collectors;
  * @Date 2020/10/28
  * @Author tangqianli
  */
+@Slf4j
 @RestController
 public class SmartHomeController {
 
@@ -23,8 +25,12 @@ public class SmartHomeController {
 
     @PostMapping("smarthome")
     public Object smartHome(HttpServletRequest request) throws IOException, ExecutionException, InterruptedException {
+
         String requestStr = request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
-        String response  = actionApp.handleRequest(requestStr, request.getParameterMap()).get();
+        log.debug(requestStr);
+
+        String response = actionApp.handleRequest(requestStr, request.getParameterMap()).get();
+        log.debug(response);
 
         return response;
     }
