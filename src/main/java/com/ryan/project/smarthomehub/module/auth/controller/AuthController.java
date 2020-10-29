@@ -52,7 +52,8 @@ public class AuthController {
     @GetMapping("auth")
     public ResponseEntity auth(HttpServletRequest request) {
 
-        log.debug("request url:{}", request.getRequestURI());
+        log.debug("request uri:{}", request.getRequestURI());
+        log.debug("request query string:{}", request.getQueryString());
 
         String clientId = request.getParameter("client_id");
         String redirectUri = request.getParameter("redirect_uri");
