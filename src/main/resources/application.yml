@@ -7,6 +7,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
+    database-platform: org.hibernate.dialect.MySQLDialect
 smart-home-hub:
   projectId: ${PROJECT_ID}
   ssoUrl: ${SSO_URL}

@@ -50,7 +50,7 @@ public class TokenServiceImpl implements ITokenService {
         //valid client_id and client_secret
         ClientStore clientStore = clientStoreService.getClientStoreByClientIdAndClientSecret(tokenInVo.getClient_id(), tokenInVo.getClient_secret());
         if (clientStore == null) {
-            throw new GrantException();
+            throw new GrantException("client_id or client_secret not validate");
         }
         log.debug("client_id and client_secret are validated:{}", clientStore);
 
@@ -82,14 +82,14 @@ public class TokenServiceImpl implements ITokenService {
         //valid client_id and client_secret
         ClientStore clientStore = clientStoreService.getClientStoreByClientIdAndClientSecret(tokenInVo.getClient_id(), tokenInVo.getClient_secret());
         if (clientStore == null) {
-            throw new GrantException();
+            throw new GrantException("client_id or client_secret not validate");
         }
 
         //valid refresh token
         TokenStore tokenStore = tokenStoreDao.getTokenStoreByClientIdAndRefreshToken(clientStore.getClientId(), tokenInVo.getRefresh_token());
         log.debug("find tokenStore record:{}", tokenStore);
         if (tokenStore == null || tokenStore.getIsRevoke()) {
-            throw new GrantException();
+            throw new GrantException("refresh token not found or revoked");
         }
 
         //generate access token
@@ -107,7 +107,7 @@ public class TokenServiceImpl implements ITokenService {
     @Override
     public String getUserOpenId(String accessToken) {
         if (StrUtil.isBlank(accessToken)) {
-            throw new GrantException();
+            throw new GrantException("access_token can't be blank");
         }
         if (accessToken.startsWith("Bearer")) {
             accessToken = accessToken.substring(7);
@@ -115,10 +115,6 @@ public class TokenServiceImpl implements ITokenService {
         String key = String.format("ACCESS_TOKEN:%s", accessToken);
         String clientId = (String) stringRedisTemplate.opsForHash().get(key, "client_id");
         return clientId;
-    }
-
-    private void validateIdAndSecret() {
-
     }
 
     private String generateRefreshToken(String clientId, String userId) {

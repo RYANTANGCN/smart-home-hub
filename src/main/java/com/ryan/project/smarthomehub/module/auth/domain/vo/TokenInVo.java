@@ -2,6 +2,8 @@ package com.ryan.project.smarthomehub.module.auth.domain.vo;
 
 import lombok.Data;
 
+import javax.validation.constraints.NotBlank;
+
 /**
  * @Descritption
  * @Date 2020/10/19
@@ -10,10 +12,20 @@ import lombok.Data;
 
 @Data
 public class TokenInVo {
+
+    @NotBlank
     String client_id;
+
+    @NotBlank
     String client_secret;
+
+    @NotBlank
     String grant_type;
+
+    @NotBlank
     String code;
+
     String redirect_uri;
+
     String refresh_token;
 }

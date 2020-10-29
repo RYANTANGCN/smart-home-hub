@@ -17,6 +17,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -87,7 +88,7 @@ public class AuthController {
     //TODO bad smell!
     @CrossOrigin
     @PostMapping("login")
-    public ResponseEntity<String> login(LoginInVO loginInVO) throws IOException {
+    public ResponseEntity<String> login(@Validated LoginInVO loginInVO) throws IOException {
 
         log.debug("login,body={}", loginInVO);
 
@@ -110,7 +111,7 @@ public class AuthController {
 
     //TODO bad smell
     @PostMapping("token")
-    public ResponseEntity token(TokenInVo tokenInVo) {
+    public ResponseEntity token(@Validated TokenInVo tokenInVo) {
 
         log.debug("token,body={}",tokenInVo);
 
@@ -129,7 +130,7 @@ public class AuthController {
                 tokenOutVo = tokenService.processRefreshToken(tokenInVo);
             default:
                 //TODO
-                throw new GrantException();
+                throw new GrantException("unexpect code");
         }
 
         return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(tokenOutVo);

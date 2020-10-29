@@ -10,18 +10,19 @@ import com.ryan.project.smarthomehub.module.auth.domain.entity.User;
 import com.ryan.project.smarthomehub.module.auth.domain.vo.TokenInVo;
 import com.ryan.project.smarthomehub.module.auth.service.IAuthService;
 import com.ryan.project.smarthomehub.module.auth.service.IClientStoreService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @Descritption
  * @Date 2020/10/19
  * @Author tangqianli
  */
+@Slf4j
 @Service
 public class AuthServiceImpl implements IAuthService {
 
@@ -50,7 +51,8 @@ public class AuthServiceImpl implements IAuthService {
         String authCode = IdUtil.objectId();
         //cache in redis
         String key = String.format("AUTH_CODE:%s", authCode);
-        stringRedisTemplate.opsForValue().set(authCode, clientId, 10L, TimeUnit.MINUTES);
+        log.debug("generate auth code redis key:{}", key);
+
         stringRedisTemplate.opsForHash().put(key, "client_id", clientId);
         stringRedisTemplate.opsForHash().put(key, "user_id", user.getOpenId());
         stringRedisTemplate.expire(key, Duration.ofMinutes(10L));
@@ -69,20 +71,20 @@ public class AuthServiceImpl implements IAuthService {
         String authCodeKey = String.format("AUTH_CODE:%s", tokenInVo.getCode());
         if (!stringRedisTemplate.hasKey(authCodeKey)) {
             //auth code expired
-            throw new GrantException();
+            throw new GrantException(String.format("auth code doest not exist or expired,authCodeKey:%s", authCodeKey));
         }
         String userId = (String) stringRedisTemplate.opsForHash().get(authCodeKey, "user_id");
         String clientId = (String) stringRedisTemplate.opsForHash().get(authCodeKey, "client_id");
 
-        //valid client_id is match
+        //validate client_id is match
         if (StrUtil.hasBlank(userId, clientId) || (!clientId.equals(tokenInVo.getClient_id()))) {
             //auth code expired or not match
-            throw new GrantException();
+            throw new GrantException("valid client_id doesn't match");
         }
 
-        //valid client id and client secret
+        //validate client id and client secret
         if (clientStoreService.getClientStoreByClientIdAndClientSecret(tokenInVo.getClient_id(), tokenInVo.getClient_secret())==null) {
-            throw new GrantException();
+            throw new GrantException("client_id or client_secret not validate");
         }
 
         return userId;
