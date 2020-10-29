@@ -112,7 +112,7 @@ public class AuthController {
     @PostMapping("token")
     public ResponseEntity token(TokenInVo tokenInVo) {
 
-        log.debug("token,body={}");
+        log.debug("token,body={}",tokenInVo);
 
         //TODO use @Validate
         if (StrUtil.hasBlank(tokenInVo.getClient_id(), tokenInVo.getClient_secret(), tokenInVo.getGrant_type(), tokenInVo.getCode(), tokenInVo.getRedirect_uri())) {
