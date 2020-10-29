@@ -15,14 +15,14 @@ public interface ITokenService {
      * @param tokenInVo
      * @return
      */
-    TokenOutVo grantRefreshToken(TokenInVo tokenInVo);
+    TokenOutVo processAuthorizationCode(TokenInVo tokenInVo);
 
     /**
-     * generate access_token
+     * generate new access_token
      * @param tokenInVo
      * @return
      */
-    TokenOutVo grantAccessToken(TokenInVo tokenInVo);
+    TokenOutVo processRefreshToken(TokenInVo tokenInVo);
 
     /**
      * get userId from access token

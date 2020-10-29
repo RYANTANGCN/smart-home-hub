@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Slf4j
@@ -111,7 +110,7 @@ public class AuthController {
 
     //TODO bad smell
     @PostMapping("token")
-    public ResponseEntity token(TokenInVo tokenInVo, HttpServletResponse response) {
+    public ResponseEntity token(TokenInVo tokenInVo) {
 
         log.debug("token,body={}");
 
@@ -124,10 +123,10 @@ public class AuthController {
 
         switch (tokenInVo.getGrant_type()) {
             case "authorization_code":
-                tokenOutVo = tokenService.grantAccessToken(tokenInVo);
+                tokenOutVo = tokenService.processAuthorizationCode(tokenInVo);
                 break;
             case "refresh_token":
-                tokenService.grantRefreshToken(tokenInVo);
+                tokenService.processRefreshToken(tokenInVo);
             default:
                 //TODO
                 throw new GrantException();

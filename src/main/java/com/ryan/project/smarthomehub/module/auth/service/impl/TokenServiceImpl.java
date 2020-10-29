@@ -42,20 +42,28 @@ public class TokenServiceImpl implements ITokenService {
     IAuthService authService;
 
     @Override
-    public TokenOutVo grantRefreshToken(TokenInVo tokenInVo) {
+    public TokenOutVo processAuthorizationCode(TokenInVo tokenInVo) {
 
         //valid auth code
         String userId = authService.validAuthCode(tokenInVo);
 
+        //valid client_id and client_secret
+        ClientStore clientStore = clientStoreService.getClientStoreByClientIdAndClientSecret(tokenInVo.getClient_id(), tokenInVo.getClient_secret());
+        if (clientStore == null) {
+            throw new GrantException();
+        }
+        log.debug("client_id and client_secret are validated:{}", clientStore);
+
         //generate refresh token
         String refreshToken = DigestUtil.sha256Hex(IdUtil.simpleUUID());
-        tokenStoreDao.save(TokenStore.builder()
+        TokenStore tokenStore = tokenStoreDao.save(TokenStore.builder()
                 .clientId(tokenInVo.getClient_id())
                 .userOpenId(userId)
                 .refreshToken(refreshToken)
                 .expiredTime(LocalDateTime.MAX)
                 .isRevoke(false)
                 .build());
+        log.debug("insert a new token store record:{}", tokenStore);
 
         //generate access token
         String accessToken = generateRefreshToken(tokenInVo.getClient_id(), userId);
@@ -69,7 +77,7 @@ public class TokenServiceImpl implements ITokenService {
     }
 
     @Override
-    public TokenOutVo grantAccessToken(TokenInVo tokenInVo) {
+    public TokenOutVo processRefreshToken(TokenInVo tokenInVo) {
 
         //valid client_id and client_secret
         ClientStore clientStore = clientStoreService.getClientStoreByClientIdAndClientSecret(tokenInVo.getClient_id(), tokenInVo.getClient_secret());
@@ -79,12 +87,14 @@ public class TokenServiceImpl implements ITokenService {
 
         //valid refresh token
         TokenStore tokenStore = tokenStoreDao.getTokenStoreByClientIdAndRefreshToken(clientStore.getClientId(), tokenInVo.getRefresh_token());
+        log.debug("find tokenStore record:{}", tokenStore);
         if (tokenStore == null || tokenStore.getIsRevoke()) {
             throw new GrantException();
         }
 
         //generate access token
         String accessToken = generateRefreshToken(tokenInVo.getClient_id(), tokenStore.getUserOpenId());
+        log.debug("generate a new access token:{}", accessToken);
 
         return TokenOutVo.builder()
                 .token_type("Bearer")
@@ -103,15 +113,19 @@ public class TokenServiceImpl implements ITokenService {
             accessToken = accessToken.substring(7);
         }
         String key = String.format("ACCESS_TOKEN:%s", accessToken);
-        String clientId = (String)stringRedisTemplate.opsForHash().get(key, "client_id");
+        String clientId = (String) stringRedisTemplate.opsForHash().get(key, "client_id");
         return clientId;
+    }
+
+    private void validateIdAndSecret() {
+
     }
 
     private String generateRefreshToken(String clientId, String userId) {
         String accessToken = IdUtil.simpleUUID();
-        log.debug("generate access token:{}",accessToken);
+        log.debug("generate access token:{}", accessToken);
         String key = String.format("ACCESS_TOKEN:%s", accessToken);
-        log.debug("redis access_token key:{}",key);
+        log.debug("redis access_token key:{}", key);
         stringRedisTemplate.opsForHash().put(key, "client_id", clientId);
         stringRedisTemplate.opsForHash().put(key, "user_id", userId);
         stringRedisTemplate.expire(key, Duration.ofMinutes(65L));
