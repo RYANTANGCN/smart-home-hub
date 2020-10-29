@@ -60,7 +60,7 @@ public class TokenServiceImpl implements ITokenService {
                 .clientId(tokenInVo.getClient_id())
                 .userOpenId(userId)
                 .refreshToken(refreshToken)
-                .expiredTime(LocalDateTime.MAX)
+                .expiredTime(LocalDateTime.now().plusYears(5L))
                 .isRevoke(false)
                 .build());
         log.debug("insert a new token store record:{}", tokenStore);
