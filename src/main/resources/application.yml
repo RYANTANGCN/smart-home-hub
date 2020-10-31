@@ -14,4 +14,4 @@ smart-home-hub:
 logging:
   level:
     root: info
-    com.ryan.project.smarthomehub.module: debug
+    com.ryan.project.smarthomehub: debug
