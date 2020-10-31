@@ -8,6 +8,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
@@ -29,7 +33,15 @@ public class SmartHomeController {
         String requestStr = request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
         log.debug(requestStr);
 
-        String response = actionApp.handleRequest(requestStr, request.getParameterMap()).get();
+        Map<String, String> headersMap = new HashMap<>();
+
+        Enumeration<String> headerNames = request.getHeaderNames();
+        Iterator<String> iterator = headerNames.asIterator();
+        while (iterator.hasNext()) {
+            String headerName = iterator.next();
+            headersMap.put(headerName, request.getHeader(headerName));
+        }
+        String response = actionApp.handleRequest(requestStr, headersMap).get();
         log.debug(response);
 
         return response;

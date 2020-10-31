@@ -27,11 +27,8 @@ public class ActionApp extends SmartHomeApp {
     @Override
     public SyncResponse onSync(@NotNull SyncRequest syncRequest, @Nullable Map<?, ?> map) {
 
-        Gson gson = new Gson();
-
-        log.debug("headers:{}", gson.toJson(map));
         //get userId
-        String accessToken = (String) map.get("Authorization");
+        String accessToken = (String) map.get("authorization");
         String userId = tokenService.getUserOpenId(accessToken);
 
         SyncResponse syncResponse = new SyncResponse(syncRequest.getRequestId(), new SyncResponse.Payload());
