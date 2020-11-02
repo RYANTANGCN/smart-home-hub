@@ -37,9 +37,12 @@ public class AuthorizationInterceptor extends HandlerInterceptorAdapter {
 
         String accessToken = request.getHeader("authorization");
         if (StrUtil.isBlank(accessToken)) {
-            throw new GrantException("access token is empty");
+            log.error("servletPath:{},method:{},access token is empty", request.getServletPath(), request.getMethod());
+            throw new GrantException(String.format("servletPath:%s,method:%s,access token is empty", request.getServletPath(), request.getMethod()));
         }
-
+        if (accessToken.startsWith("Bearer")) {
+            accessToken = accessToken.substring(7);
+        }
         log.debug("access token:{}", accessToken);
         String key = String.format("ACCESS_TOKEN:%s", accessToken);
         if (stringRedisTemplate.hasKey(key)) {
