@@ -11,6 +11,7 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.stream.Collectors;
 
 /**
  * @Descritption
@@ -37,7 +38,8 @@ public class AuthorizationInterceptor extends HandlerInterceptorAdapter {
 
         String accessToken = request.getHeader("authorization");
         if (StrUtil.isBlank(accessToken)) {
-            log.error("servletPath:{},method:{},access token is empty", request.getServletPath(), request.getMethod());
+            log.error("request uri:{},method:{},access token is empty", request.getServletPath(), request.getMethod());
+            log.debug("request body:{}", request.getReader().lines().collect(Collectors.joining(System.lineSeparator())));
             throw new GrantException(String.format("servletPath:%s,method:%s,access token is empty", request.getServletPath(), request.getMethod()));
         }
         if (accessToken.startsWith("Bearer")) {
