@@ -45,6 +45,8 @@ public class ActionApp extends SmartHomeApp {
         String userId = tokenService.getUserOpenId(accessToken);
 //        String userId = "1234";
 
+        log.debug("get userId:{} from access_token:",userId,accessToken);
+
         SyncResponse syncResponse = new SyncResponse(syncRequest.getRequestId(), new SyncResponse.Payload());
         syncResponse.payload.agentUserId = userId;
         List<QueryDocumentSnapshot> devices = database
@@ -52,6 +54,7 @@ public class ActionApp extends SmartHomeApp {
                 .document(userId)
                 .collection("devices")
                 .get().get().getDocuments();
+        log.debug("query user:{} devices count:{}",devices.size());
         syncResponse.payload.devices = new SyncResponse.Payload.Device[devices.size()];
         AtomicInteger i = new AtomicInteger(0);
         devices.forEach(w->{
