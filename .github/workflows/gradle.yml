@@ -23,7 +23,7 @@ jobs:
         username: ${{ secrets.USERNAME }}
         password: ${{ secrets.PASSWORD }}
         port: ${{ secrets.PORT }}
-        source: credentials/theta-citron-232912-firebase-adminsdk-r9n2m-42372abf77.json
+        source: credentials/
         target: "."
     - name: list files
       run: ls -l
