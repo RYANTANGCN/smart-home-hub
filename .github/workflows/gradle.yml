@@ -30,6 +30,7 @@ jobs:
       uses: cross-the-world/ssh-scp-ssh-pipelines@latest
       with:
         host: ${{ secrets.DC_HOST }}
+        port: ${{ secrets.DC_PORT }}
         user: ${{ secrets.DC_USER }}
         pass: ${{ secrets.DC_PASS }}
         scp: |
