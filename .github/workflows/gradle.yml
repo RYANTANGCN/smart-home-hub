@@ -17,13 +17,14 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: copy file via ssh password
+      run: ls -R credentials
       uses: appleboy/scp-action@master
       with:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USERNAME }}
         password: ${{ secrets.PASSWORD }}
         port: ${{ secrets.PORT }}
-        source: "theta-citron-232912-firebase-adminsdk-r9n2m-42372abf77.json"
+        source: "credentials/theta-citron-232912-firebase-adminsdk-r9n2m-42372abf77.json"
         target: "."
     - name: list files
       run: ls -l
