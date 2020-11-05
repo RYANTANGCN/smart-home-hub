@@ -27,10 +27,10 @@ jobs:
     - name: copy file via ssh password
       uses: appleboy/scp-action@master
       with:
-        host: ${{ secrets.DC_HOST }}
-        username: ${{ secrets.DC_USERNAME }}
-        password: ${{ secrets.DC_PASSWORD }}
-        port: ${{ secrets.DC_PORT }}
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        password: ${{ secrets.PASSWORD }}
+        port: ${{ secrets.PORT }}
         source: "~/theta-citron-232912-firebase-adminsdk-r9n2m-42372abf77.json"
         target: "firebase-adminsdk.json"
     - name: Set up Docker Buildx
