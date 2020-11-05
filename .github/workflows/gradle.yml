@@ -36,7 +36,7 @@ jobs:
         scp: |
           '~/theta-citron-232912-firebase-adminsdk-r9n2m-42372abf77.json' => ./firebase-adminsdk.json
     - name: list file
-      run: ls -l
+      run: scp -P ${{ secrets.DC_PORT }} ${{ secrets.DC_USER }}@${{ secrets.DC_HOST }}:~/theta-citron-232912-firebase-adminsdk-r9n2m-42372abf77.json ./firebase-adminsdk.json && ls -l
     - name: Login to DockerHub
       uses: docker/login-action@v1 
       with:
