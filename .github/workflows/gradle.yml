@@ -23,7 +23,7 @@ jobs:
         name: id_rsa # optional
         known_hosts: ${{ secrets.KNOWN_HOSTS }}
     - name: copy file from remote
-      run: rsync -av -e 'ssh -p 6822' ${{ secrets.USERNAME }}@${{ secrets.PASSWORD }}:~/theta-citron-232912-firebase-adminsdk-r9n2m-42372abf77.json .
+      run: rsync -av -e 'ssh -p 6822' ${{ secrets.USERNAME }}@${{ secrets.HOST }}:~/theta-citron-232912-firebase-adminsdk-r9n2m-42372abf77.json .
     - name: list files
       run: ls -l
     - name: Set up JDK 1.8
