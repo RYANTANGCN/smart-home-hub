@@ -24,19 +24,17 @@ jobs:
       run: chmod +x gradlew
     - name: Build with Gradle
       run: ./gradlew build -x test
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v1
-    - name: download credentials json file
-      uses: cross-the-world/ssh-scp-ssh-pipelines@latest
+    - name: copy file via ssh password
+      uses: appleboy/scp-action@master
       with:
         host: ${{ secrets.DC_HOST }}
+        username: ${{ secrets.DC_USERNAME }}
+        password: ${{ secrets.DC_PASSWORD }}
         port: ${{ secrets.DC_PORT }}
-        user: ${{ secrets.DC_USER }}
-        pass: ${{ secrets.DC_PASS }}
-        scp: |
-          '~/theta-citron-232912-firebase-adminsdk-r9n2m-42372abf77.json' => ./firebase-adminsdk.json
-    - name: list file
-      run: scp -P ${{ secrets.DC_PORT }} ${{ secrets.DC_USER }}@${{ secrets.DC_HOST }}:~/theta-citron-232912-firebase-adminsdk-r9n2m-42372abf77.json ./firebase-adminsdk.json && ls -l
+        source: "~/theta-citron-232912-firebase-adminsdk-r9n2m-42372abf77.json"
+        target: "firebase-adminsdk.json"
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v1
     - name: Login to DockerHub
       uses: docker/login-action@v1 
       with:
