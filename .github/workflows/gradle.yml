@@ -26,6 +26,14 @@ jobs:
       run: ./gradlew build -x test
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v1
+    - name: download credentials json file
+      uses: cross-the-world/ssh-scp-ssh-pipelines@latest
+      with:
+      host: ${{ secrets.DC_HOST }}
+      user: ${{ secrets.DC_USER }}
+      pass: ${{ secrets.DC_PASS }}
+      scp: |
+        '~/theta-citron-232912-firebase-adminsdk-r9n2m-42372abf77.json' => ./firebase-adminsdk.json
     - name: Login to DockerHub
       uses: docker/login-action@v1 
       with:

@@ -32,6 +32,7 @@ public class AuthorizationInterceptor extends HandlerInterceptorAdapter {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
         //filter un-need access_token servlet path
+        log.info("request uri:{}",request.getServletPath());
         if (hubProperties.getExcludeUri().contains(request.getServletPath())) {
             return true;
         }
