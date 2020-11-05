@@ -16,15 +16,14 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: copy file via ssh password
-      uses: appleboy/scp-action@master
+    - name: Install SSH key
+      uses: shimataro/ssh-key-action@v2
       with:
-        host: ${{ secrets.HOST }}
-        username: ${{ secrets.USERNAME }}
-        password: ${{ secrets.PASSWORD }}
-        port: ${{ secrets.PORT }}
-        source: "credentials/"
-        target: "."
+        key: ${{ secrets.SSH_KEY }}
+        name: id_rsa # optional
+        known_hosts: ${{ secrets.KNOWN_HOSTS }}
+    - name: copy file from remote
+      run: rsync -av -e 'ssh -p 6822' ${{ secrets.USERNAME }}@${{ secrets.PASSWORD }}:~/theta-citron-232912-firebase-adminsdk-r9n2m-42372abf77.json .
     - name: list files
       run: ls -l
     - name: Set up JDK 1.8
