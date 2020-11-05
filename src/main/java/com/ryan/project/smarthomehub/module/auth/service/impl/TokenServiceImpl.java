@@ -66,7 +66,7 @@ public class TokenServiceImpl implements ITokenService {
         log.debug("insert a new token store record:{}", tokenStore);
 
         //generate access token
-        String accessToken = generateRefreshToken(tokenInVo.getClient_id(), userId);
+        String accessToken = generateAccessToken(tokenInVo.getClient_id(), userId);
 
         return TokenOutVo.builder()
                 .token_type("Bearer")
@@ -93,7 +93,7 @@ public class TokenServiceImpl implements ITokenService {
         }
 
         //generate access token
-        String accessToken = generateRefreshToken(tokenInVo.getClient_id(), tokenStore.getUserOpenId());
+        String accessToken = generateAccessToken(tokenInVo.getClient_id(), tokenStore.getUserOpenId());
         log.debug("generate a new access token:{}", accessToken);
 
         return TokenOutVo.builder()
@@ -113,11 +113,11 @@ public class TokenServiceImpl implements ITokenService {
             accessToken = accessToken.substring(7);
         }
         String key = String.format("ACCESS_TOKEN:%s", accessToken);
-        String clientId = (String) stringRedisTemplate.opsForHash().get(key, "client_id");
+        String clientId = (String) stringRedisTemplate.opsForHash().get(key, "user_id");
         return clientId;
     }
 
-    private String generateRefreshToken(String clientId, String userId) {
+    private String generateAccessToken(String clientId, String userId) {
         String accessToken = IdUtil.simpleUUID();
         log.debug("generate access token:{}", accessToken);
         String key = String.format("ACCESS_TOKEN:%s", accessToken);
