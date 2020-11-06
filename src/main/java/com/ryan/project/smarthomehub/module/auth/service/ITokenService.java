@@ -31,4 +31,10 @@ public interface ITokenService {
      */
     String getUserOpenId(String accessToken);
 
+    /**
+     * revoke refresh token
+     * @param accessToken
+     */
+    void revokeRefreshToken(String accessToken);
+
 }

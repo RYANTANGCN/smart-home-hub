@@ -12,4 +12,6 @@ public interface TokenStoreDao extends JpaRepository<TokenStore, Integer> {
 
     TokenStore getTokenStoreByClientIdAndRefreshToken(String clientId, String refreshToken);
 
+    TokenStore getTokenStoreByClientIdAndRefreshTokenAndUserOpenId(String clientId, String refreshToken, String userOpenId);
+
 }

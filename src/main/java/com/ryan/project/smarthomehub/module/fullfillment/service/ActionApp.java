@@ -157,6 +157,10 @@ public class ActionApp extends SmartHomeApp {
 
     @Override
     public void onDisconnect(@NotNull DisconnectRequest disconnectRequest, @Nullable Map<?, ?> map) {
+        //get userId
+        String accessToken = (String) map.get("authorization");
 
+        //revoke token store record
+        tokenService.revokeRefreshToken(accessToken);
     }
 }

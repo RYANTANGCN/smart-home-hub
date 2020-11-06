@@ -66,7 +66,7 @@ public class TokenServiceImpl implements ITokenService {
         log.debug("insert a new token store record:{}", tokenStore);
 
         //generate access token
-        String accessToken = generateAccessToken(tokenInVo.getClient_id(), userId);
+        String accessToken = generateAccessToken(tokenInVo.getClient_id(), userId, refreshToken);
 
         return TokenOutVo.builder()
                 .token_type("Bearer")
@@ -93,7 +93,8 @@ public class TokenServiceImpl implements ITokenService {
         }
 
         //generate access token
-        String accessToken = generateAccessToken(tokenInVo.getClient_id(), tokenStore.getUserOpenId());
+        String accessToken = generateAccessToken(tokenInVo.getClient_id(), tokenStore.getUserOpenId(), tokenStore.getRefreshToken());
+
         log.debug("generate a new access token:{}", accessToken);
 
         return TokenOutVo.builder()
@@ -117,13 +118,32 @@ public class TokenServiceImpl implements ITokenService {
         return clientId;
     }
 
-    private String generateAccessToken(String clientId, String userId) {
+    @Override
+    public void revokeRefreshToken(String accessToken) {
+        String key = String.format("ACCESS_TOKEN:%s", accessToken);
+        log.debug("redis access_token key:{}", key);
+
+        String clientId = (String)stringRedisTemplate.opsForHash().get(key, "client_id");
+        String userOpenId = (String)stringRedisTemplate.opsForHash().get(key, "user_id");
+        String refreshToken = (String) stringRedisTemplate.opsForHash().get(key, "refresh_token");
+
+        TokenStore tokenStore = tokenStoreDao.getTokenStoreByClientIdAndRefreshTokenAndUserOpenId(clientId, refreshToken, userOpenId);
+        if (tokenStore != null) {
+            tokenStore.setIsRevoke(true);
+            tokenStoreDao.save(tokenStore);
+        }else {
+            log.error("can't find token store clientId:{},userOpenId:{},refreshToken:{}", clientId, userOpenId, refreshToken);
+        }
+    }
+
+    private String generateAccessToken(String clientId, String userId,String refreshToken) {
         String accessToken = IdUtil.simpleUUID();
         log.debug("generate access token:{}", accessToken);
         String key = String.format("ACCESS_TOKEN:%s", accessToken);
         log.debug("redis access_token key:{}", key);
         stringRedisTemplate.opsForHash().put(key, "client_id", clientId);
         stringRedisTemplate.opsForHash().put(key, "user_id", userId);
+        stringRedisTemplate.opsForHash().put(key, "refresh_token", refreshToken);
         stringRedisTemplate.expire(key, Duration.ofMinutes(65L));
 
         return accessToken;
