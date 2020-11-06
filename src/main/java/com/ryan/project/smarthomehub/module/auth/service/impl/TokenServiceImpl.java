@@ -120,6 +120,12 @@ public class TokenServiceImpl implements ITokenService {
 
     @Override
     public void revokeRefreshToken(String accessToken) {
+        if (StrUtil.isBlank(accessToken)) {
+            log.error("can't revoke refresh token,access_token:{}", accessToken);
+        }
+        if (accessToken.startsWith("Bearer")) {
+            accessToken = accessToken.substring(7);
+        }
         String key = String.format("ACCESS_TOKEN:%s", accessToken);
         log.debug("redis access_token key:{}", key);
 
