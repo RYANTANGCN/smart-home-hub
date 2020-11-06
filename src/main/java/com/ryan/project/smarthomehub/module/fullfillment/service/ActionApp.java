@@ -1,6 +1,7 @@
 package com.ryan.project.smarthomehub.module.fullfillment.service;
 
 import com.google.actions.api.smarthome.*;
+import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.gson.Gson;
@@ -15,9 +16,11 @@ import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -45,7 +48,7 @@ public class ActionApp extends SmartHomeApp {
         String userId = tokenService.getUserOpenId(accessToken);
 //        String userId = "1234";
 
-        log.debug("get userId:{} from access_token:{}",userId,accessToken);
+        log.debug("get userId:{} from access_token:{}", userId, accessToken);
 
         SyncResponse syncResponse = new SyncResponse(syncRequest.getRequestId(), new SyncResponse.Payload());
         syncResponse.payload.agentUserId = userId;
@@ -54,10 +57,10 @@ public class ActionApp extends SmartHomeApp {
                 .document(userId)
                 .collection("devices")
                 .get().get().getDocuments();
-        log.debug("query user:{} devices count:{}",userId,devices.size());
+        log.debug("query user:{} devices count:{}", userId, devices.size());
         syncResponse.payload.devices = new SyncResponse.Payload.Device[devices.size()];
         AtomicInteger i = new AtomicInteger(0);
-        devices.forEach(w->{
+        devices.forEach(w -> {
             QueryDocumentSnapshot device = w;
             SyncResponse.Payload.Device.Builder deviceBuilder =
                     new SyncResponse.Payload.Device.Builder()
@@ -112,7 +115,38 @@ public class ActionApp extends SmartHomeApp {
     @NotNull
     @Override
     public QueryResponse onQuery(@NotNull QueryRequest queryRequest, @Nullable Map<?, ?> map) {
-        return null;
+        //get userId
+        String accessToken = (String) map.get("authorization");
+        String userId = tokenService.getUserOpenId(accessToken);
+//        String userId = "1234";
+        log.debug("get userId:{} from access_token:{}", userId, accessToken);
+
+        Map<String, Map<String, Object>> devicesState = new HashMap<>();
+
+        Arrays.stream(queryRequest.inputs).forEach(w -> {
+            if (w instanceof QueryRequest.Inputs) {
+                Arrays.stream(((QueryRequest.Inputs) w).payload.devices).forEach(device -> {
+                    try {
+                        DocumentSnapshot documentSnapshot = database
+                                .collection("users")
+                                .document(userId)
+                                .collection("devices").document(device.getId())
+                                .get().get();
+                        Map<String, Object> deviceState = (Map<String, Object>) documentSnapshot.get("states");
+                        devicesState.put(device.getId(), deviceState);
+                    } catch (InterruptedException e) {
+                        devicesState.put(device.getId(), new HashMap<>());
+                        e.printStackTrace();
+                    } catch (ExecutionException e) {
+                        devicesState.put(device.getId(), new HashMap<>());
+                        e.printStackTrace();
+                    }
+                });
+            }
+        });
+        QueryResponse queryResponse = new QueryResponse(queryRequest.getRequestId(), new QueryResponse.Payload());
+        queryResponse.payload.setDevices(devicesState);
+        return queryResponse;
     }
 
     @NotNull

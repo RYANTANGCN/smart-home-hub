@@ -11,7 +11,7 @@ spring:
 smart-home-hub:
   projectId: ${PROJECT_ID}
   ssoUrl: ${SSO_URL}
-  excludeUri: /auth,/login,/token,/error,/smarthome
+  excludeUri: /auth,/login,/token,/error
 logging:
   level:
     root: info
