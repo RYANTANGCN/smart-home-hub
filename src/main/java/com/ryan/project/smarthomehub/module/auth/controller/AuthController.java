@@ -112,7 +112,7 @@ public class AuthController {
 
     //TODO bad smell
     @PostMapping("token")
-    public ResponseEntity token(TokenInVo tokenInVo) {
+    public ResponseEntity token(@Validated TokenInVo tokenInVo) {
 
         log.debug("token,body={}",tokenInVo);
 

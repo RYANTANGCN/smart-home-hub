@@ -22,7 +22,6 @@ public class TokenInVo {
     @NotBlank
     String grant_type;
 
-    @NotBlank
     String code;
 
     String redirect_uri;
