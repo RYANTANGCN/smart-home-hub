@@ -116,11 +116,6 @@ public class AuthController {
 
         log.debug("token,body={}",tokenInVo);
 
-        //TODO use @Validate
-        if (StrUtil.hasBlank(tokenInVo.getClient_id(), tokenInVo.getClient_secret(), tokenInVo.getGrant_type(), tokenInVo.getCode(), tokenInVo.getRedirect_uri())) {
-            return ResponseEntity.badRequest().contentType(MediaType.APPLICATION_JSON).body("{\"error\": \"invalid_grant\"}");
-        }
-
         TokenOutVo tokenOutVo;
 
         switch (tokenInVo.getGrant_type()) {
