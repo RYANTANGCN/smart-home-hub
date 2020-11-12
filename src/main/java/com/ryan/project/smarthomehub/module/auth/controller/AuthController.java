@@ -129,6 +129,7 @@ public class AuthController {
                 break;
             case "refresh_token":
                 tokenOutVo = tokenService.processRefreshToken(tokenInVo);
+                break;
             default:
                 //TODO
                 throw new GrantException("unexpect code");
