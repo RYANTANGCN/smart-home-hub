@@ -9,11 +9,13 @@ import com.google.home.graph.v1.DeviceProto;
 import com.google.protobuf.Struct;
 import com.google.protobuf.util.JsonFormat;
 import com.ryan.project.smarthomehub.module.auth.service.ITokenService;
+import com.ryan.project.smarthomehub.module.device.IDevice;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -31,6 +33,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Slf4j
 @Service
 public class ActionApp extends SmartHomeApp {
+
+    @Autowired
+    ApplicationContext applicationContext;
 
     @Autowired
     ITokenService tokenService;
@@ -149,9 +154,33 @@ public class ActionApp extends SmartHomeApp {
         return queryResponse;
     }
 
+    @SneakyThrows
     @NotNull
     @Override
     public ExecuteResponse onExecute(@NotNull ExecuteRequest executeRequest, @Nullable Map<?, ?> map) {
+        //get userId
+        String accessToken = (String) map.get("authorization");
+        String userId = tokenService.getUserOpenId(accessToken);
+
+        for (SmartHomeRequest.RequestInputs input : executeRequest.inputs) {
+            if (input instanceof ExecuteRequest.Inputs){
+
+                for (ExecuteRequest.Inputs.Payload.Commands command : ((ExecuteRequest.Inputs) input).payload.commands) {
+                    for (ExecuteRequest.Inputs.Payload.Commands.Devices device : command.devices) {
+                        //TODO
+                        DocumentSnapshot documentSnapshot = database
+                                .collection("users")
+                                .document(userId)
+                                .collection("devices").document(device.getId())
+                                .get().get();
+
+                        IDevice concreteDevice = (IDevice) applicationContext.getBean((String) documentSnapshot.get("type"));
+
+                        concreteDevice.processTraits(documentSnapshot, command.execution);
+                    }
+                }
+            }
+        }
         return null;
     }
 
