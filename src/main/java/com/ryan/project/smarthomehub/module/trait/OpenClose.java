@@ -1,6 +1,6 @@
 package com.ryan.project.smarthomehub.module.trait;
 
-import com.google.cloud.firestore.DocumentSnapshot;
+import com.google.cloud.firestore.DocumentReference;
 import com.ryan.project.smarthomehub.config.Command;
 
 import java.util.Map;
@@ -12,5 +12,5 @@ import java.util.Map;
  */
 public interface OpenClose{
     @Command("action.devices.commands.OpenClose")
-    void processOpenClose(DocumentSnapshot documentSnapshot, Map<String, Object> params);
+    void processOpenClose(DocumentReference documentSnapshot, Map<String, Object> params);
 }

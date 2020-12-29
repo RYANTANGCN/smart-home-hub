@@ -1,6 +1,7 @@
 package com.ryan.project.smarthomehub.module.fullfillment.service;
 
 import com.google.actions.api.smarthome.*;
+import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
@@ -179,15 +180,14 @@ public class ActionApp extends SmartHomeApp {
                         respCommand.getStates().putAll(execution.getParams());
                         //Device List
                         for (ExecuteRequest.Inputs.Payload.Commands.Devices device : command.devices) {
-                            DocumentSnapshot documentSnapshot = database
+                            DocumentReference documentReference = database
                                     .collection("users")
                                     .document(userId)
-                                    .collection("devices").document(device.getId())
-                                    .get().get();
+                                    .collection("devices").document(device.getId());
 
-                            IDevice concreteDevice = (IDevice) applicationContext.getBean((String) documentSnapshot.get("type"));
+                            IDevice concreteDevice = (IDevice) applicationContext.getBean((String) documentReference.get().get().get("type"));
 
-                            respDeviceIds.add(concreteDevice.processTraits(documentSnapshot, execution));
+                            respDeviceIds.add(concreteDevice.processTraits(documentReference, execution));
                         }
                     }
                     respCommand.setIds(respDeviceIds.toArray(new String[respDeviceIds.size()]));
