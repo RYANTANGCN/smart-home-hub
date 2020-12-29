@@ -2,13 +2,31 @@ package com.ryan.project.smarthomehub.module.device;
 
 import com.google.actions.api.smarthome.ExecuteRequest;
 import com.google.cloud.firestore.DocumentSnapshot;
+import com.ryan.project.smarthomehub.config.Command;
+import lombok.SneakyThrows;
+
+import java.lang.reflect.Method;
 
 /**
  * @Descritption
  * @Date 2020/12/25
  * @Author tangqianli
  */
-public interface IDevice {
+public class IDevice {
 
-    String processTraits(DocumentSnapshot device, ExecuteRequest.Inputs.Payload.Commands.Execution[] executions);
+    @SneakyThrows
+    public String processTraits(DocumentSnapshot device, ExecuteRequest.Inputs.Payload.Commands.Execution execution) {
+            for (Class<?> anInterface : this.getClass().getInterfaces()) {
+                for (Method method : anInterface.getMethods()) {
+                    if (method.isAnnotationPresent(Command.class)) {
+                        Command command = method.getAnnotation(Command.class);
+
+                        if (execution.command.equals(command.value())) {
+                            method.invoke(this, device, execution.getParams());
+                        }
+                    }
+                }
+            }
+        return device.getId();
+    }
 }

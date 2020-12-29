@@ -7,10 +7,10 @@ import java.util.Map;
 
 /**
  * @Descritption
- * @Date 2020/12/25
+ * @Date 2020/12/29
  * @Author tangqianli
  */
-public interface OpenClose{
-    @Command("action.devices.commands.OpenClose")
-    void processOpenClose(DocumentSnapshot documentSnapshot, Map<String, Object> params);
+public interface OnOff {
+    @Command("action.devices.commands.OnOff")
+    void processOnOff(DocumentSnapshot documentSnapshot, Map<String, Object> params);
 }

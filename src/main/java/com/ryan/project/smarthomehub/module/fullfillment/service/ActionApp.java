@@ -18,10 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -162,26 +159,46 @@ public class ActionApp extends SmartHomeApp {
         String accessToken = (String) map.get("authorization");
         String userId = tokenService.getUserOpenId(accessToken);
 
+        ExecuteResponse executeResponse = new ExecuteResponse();
+        executeResponse.payload = new ExecuteResponse.Payload();
+        List<ExecuteResponse.Payload.Commands> commandsResponse = new ArrayList<>();
+
         for (SmartHomeRequest.RequestInputs input : executeRequest.inputs) {
             if (input instanceof ExecuteRequest.Inputs){
 
+                //Command List
                 for (ExecuteRequest.Inputs.Payload.Commands command : ((ExecuteRequest.Inputs) input).payload.commands) {
-                    for (ExecuteRequest.Inputs.Payload.Commands.Devices device : command.devices) {
-                        //TODO
-                        DocumentSnapshot documentSnapshot = database
-                                .collection("users")
-                                .document(userId)
-                                .collection("devices").document(device.getId())
-                                .get().get();
+                    ExecuteResponse.Payload.Commands respCommand = new ExecuteResponse.Payload.Commands();
+                    respCommand.setStates(new HashMap<>());
 
-                        IDevice concreteDevice = (IDevice) applicationContext.getBean((String) documentSnapshot.get("type"));
 
-                        concreteDevice.processTraits(documentSnapshot, command.execution);
+                    List<String> respDeviceIds = new ArrayList<>();
+                    //Execution List
+                    for (ExecuteRequest.Inputs.Payload.Commands.Execution execution : command.execution) {
+
+                        respCommand.getStates().putAll(execution.getParams());
+                        //Device List
+                        for (ExecuteRequest.Inputs.Payload.Commands.Devices device : command.devices) {
+                            DocumentSnapshot documentSnapshot = database
+                                    .collection("users")
+                                    .document(userId)
+                                    .collection("devices").document(device.getId())
+                                    .get().get();
+
+                            IDevice concreteDevice = (IDevice) applicationContext.getBean((String) documentSnapshot.get("type"));
+
+                            respDeviceIds.add(concreteDevice.processTraits(documentSnapshot, execution));
+                        }
                     }
+                    respCommand.setIds(respDeviceIds.toArray(new String[respDeviceIds.size()]));
+                    respCommand.setStatus("SUCCESS");
+                    commandsResponse.add(respCommand);
                 }
             }
         }
-        return null;
+        executeResponse.payload.setCommands(commandsResponse.toArray(new ExecuteResponse.Payload.Commands[commandsResponse.size()]));
+        executeResponse.setRequestId(executeRequest.getRequestId());
+        return executeResponse;
     }
 
     @Override
