@@ -12,7 +12,7 @@ import java.lang.reflect.Method;
  * @Date 2020/12/25
  * @Author tangqianli
  */
-public class IDevice {
+public class Device {
 
     @SneakyThrows
     public String processTraits(DocumentReference device, ExecuteRequest.Inputs.Payload.Commands.Execution execution) {
