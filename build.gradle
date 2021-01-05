@@ -37,6 +37,8 @@ dependencies {
     compile group: 'org.hibernate.validator', name: 'hibernate-validator', version: '6.1.6.Final'
     compile group: 'javax.validation', name: 'validation-api', version: '2.0.1.Final'
     compile 'cn.hutool:hutool-all:5.4.4'
+    // https://mvnrepository.com/artifact/org.eclipse.paho/org.eclipse.paho.client.mqttv3
+    compile group: 'org.eclipse.paho', name: 'org.eclipse.paho.client.mqttv3', version: '1.2.5'
 
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
