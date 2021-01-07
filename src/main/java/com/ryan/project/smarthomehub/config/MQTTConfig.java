@@ -39,6 +39,7 @@ public class MQTTConfig {
         MqttAsyncClient mqttAsyncClient = new MqttAsyncClient(mqttProperties.getBroker(), mqttProperties.getClientId(), new MemoryPersistence());
         MqttConnectOptions connOpts = new MqttConnectOptions();
         connOpts.setCleanSession(true);
+        connOpts.setAutomaticReconnect(true);
 
         log.info("Connecting to broker: " + mqttProperties.getBroker());
 
@@ -51,7 +52,7 @@ public class MQTTConfig {
 
             @Override
             public void connectionLost(Throwable cause) {
-                log.info("broker: "+mqttProperties.getBroker()+" connection lost");
+                log.error("broker: "+mqttProperties.getBroker()+" connection lost");
             }
 
             @Override
