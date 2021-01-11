@@ -11,10 +11,10 @@ import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 public class MqttTest {
     public static void main(String[] args) {
         String subTopic = "testtopic/#";
-        String pubTopic = "testtopic/1";
+        String pubTopic = "inTopic";
         String content = "Hello World";
         int qos = 2;
-        String broker = "tcp://localhost:1883";
+        String broker = "tcp://aliyun.ryantang.org:1883";
         String clientId = "emqx_test";
         MemoryPersistence persistence = new MemoryPersistence();
 
@@ -57,7 +57,7 @@ public class MqttTest {
 //            client.subscribe(subTopic);
 
             // 消息发布所需参数
-            MqttMessage message = new MqttMessage(content.getBytes());
+            MqttMessage message = new MqttMessage(new byte[]{0,0});
             message.setQos(qos);
             client.publish(pubTopic, message);
             System.out.println("Message published");
