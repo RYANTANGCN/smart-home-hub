@@ -28,11 +28,12 @@ public class Light extends Device implements OnOff {
 
         log.debug("process light OnOff command,params:{}", params);
         boolean on = (boolean) params.get("on");
+        byte b = on?(byte)1:(byte)0;
 
         try {
             //mqtt
-            ObjectMapper objectMapper = new ObjectMapper();
-            MqttMessage mqttMessage = new MqttMessage(objectMapper.writeValueAsBytes(params));
+//            ObjectMapper objectMapper = new ObjectMapper();
+            MqttMessage mqttMessage = new MqttMessage(new byte[]{0,b});
             mqttMessage.setQos(0);
 
             //send command to mqtt
