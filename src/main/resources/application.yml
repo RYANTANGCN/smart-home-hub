@@ -11,6 +11,8 @@ spring:
 mqtt:
   broker: ${MQTT_BROKER_URL}
   clientId: ${MQTT_CLIENT_ID}
+  username: ${MQTT_USERNAME}
+  password: ${MQTT_PASSWORD}
 smart-home-hub:
   projectId: ${PROJECT_ID}
   ssoUrl: ${SSO_URL}

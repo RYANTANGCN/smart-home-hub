@@ -38,6 +38,8 @@ public class MQTTConfig {
     MqttAsyncClient mqttAsyncClient() throws MqttException {
         MqttAsyncClient mqttAsyncClient = new MqttAsyncClient(mqttProperties.getBroker(), mqttProperties.getClientId(), new MemoryPersistence());
         MqttConnectOptions connOpts = new MqttConnectOptions();
+        connOpts.setUserName(mqttProperties.getUsername());
+        connOpts.setPassword(mqttProperties.getPassword().toCharArray());
         connOpts.setCleanSession(true);
         connOpts.setAutomaticReconnect(true);
 
