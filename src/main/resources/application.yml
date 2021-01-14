@@ -21,3 +21,5 @@ logging:
   level:
     root: info
     com.ryan.project.smarthomehub: debug
+  file:
+    path: /tmp/log
