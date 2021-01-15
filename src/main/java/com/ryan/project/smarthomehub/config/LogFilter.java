@@ -14,8 +14,8 @@ public class LogFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         try {
-            log.debug(request.getServerName());
-            log.debug(((RequestFacade)request).getServletPath());
+            log.debug("ServerName:{}", request.getServerName());
+            log.debug("ServletPath:{}", ((RequestFacade) request).getServletPath());
             Iterator<String> iterator = ((RequestFacade) request).getHeaderNames().asIterator();
             while (iterator.hasNext()) {
                 String head = iterator.next();
