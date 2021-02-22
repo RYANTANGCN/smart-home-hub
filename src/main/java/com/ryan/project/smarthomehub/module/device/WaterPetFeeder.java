@@ -1,6 +1,7 @@
 package com.ryan.project.smarthomehub.module.device;
 
 import com.google.cloud.firestore.DocumentReference;
+import com.ryan.project.smarthomehub.config.DeviceType;
 import com.ryan.project.smarthomehub.module.trait.Dispense;
 import com.ryan.project.smarthomehub.module.trait.OnOff;
 import lombok.extern.slf4j.Slf4j;
@@ -17,8 +18,9 @@ import java.util.Map;
  * @Author tangqianli
  */
 @Slf4j
-@Service("action.devices.types.PETFEEDER")
-public class PetFeeder extends Device implements OnOff, Dispense {
+@DeviceType("action.devices.types.PETFEEDER")
+@Service("esp01s_water_pet_feeder")
+public class WaterPetFeeder extends Device implements OnOff, Dispense {
 
     @Autowired
     MqttAsyncClient mqttAsyncClient;

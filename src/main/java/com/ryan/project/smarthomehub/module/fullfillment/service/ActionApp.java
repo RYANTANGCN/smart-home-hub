@@ -9,6 +9,7 @@ import com.google.gson.Gson;
 import com.google.home.graph.v1.DeviceProto;
 import com.google.protobuf.Struct;
 import com.google.protobuf.util.JsonFormat;
+import com.ryan.project.smarthomehub.config.DeviceType;
 import com.ryan.project.smarthomehub.module.auth.service.ITokenService;
 import com.ryan.project.smarthomehub.module.device.Device;
 import lombok.SneakyThrows;
@@ -184,8 +185,13 @@ public class ActionApp extends SmartHomeApp {
                                     .collection("users")
                                     .document(userId)
                                     .collection("devices").document(device.getId());
-
-                            Device concreteDevice = (Device) applicationContext.getBean((String) documentReference.get().get().get("type"));
+                            String deviceName = (String) documentReference.get().get().get("name");
+                            Device concreteDevice = (Device) applicationContext.getBeansWithAnnotation(DeviceType.class).get(deviceName);
+                            if (concreteDevice == null) {
+                                log.error(deviceName + " not found");
+                                continue;
+                            }
+//                            Device concreteDevice = (Device) applicationContext.getBean((String) documentReference.get().get().get("type"));
 
                             respDeviceIds.add(concreteDevice.processTraits(documentReference, execution));
                         }

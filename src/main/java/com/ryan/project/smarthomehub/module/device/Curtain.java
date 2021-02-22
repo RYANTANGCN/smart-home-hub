@@ -2,6 +2,7 @@ package com.ryan.project.smarthomehub.module.device;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.cloud.firestore.DocumentReference;
+import com.ryan.project.smarthomehub.config.DeviceType;
 import com.ryan.project.smarthomehub.module.trait.OpenClose;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.paho.client.mqttv3.MqttAsyncClient;
@@ -20,7 +21,8 @@ import java.util.Map;
  * @Author tangqianli
  */
 @Slf4j
-@Service("action.devices.types.CURTAIN")
+@DeviceType("action.devices.types.CURTAIN")
+@Service("dooya_curtain_m1")
 public class Curtain extends Device implements OpenClose {
 
     @Autowired
