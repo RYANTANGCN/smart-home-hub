@@ -18,7 +18,7 @@ import java.util.Map;
  */
 @Slf4j
 @DeviceType("action.devices.types.LIGHT")
-@Service("virtual_light")
+@Service("virtual_led_light")
 public class Light extends Device implements OnOff {
 
     @Autowired

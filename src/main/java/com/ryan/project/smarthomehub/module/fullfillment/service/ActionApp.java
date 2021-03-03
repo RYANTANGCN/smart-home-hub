@@ -64,8 +64,9 @@ public class ActionApp extends SmartHomeApp {
         log.debug("query user:{} devices count:{}", userId, devices.size());
         syncResponse.payload.devices = new SyncResponse.Payload.Device[devices.size()];
         AtomicInteger i = new AtomicInteger(0);
-        devices.forEach(w -> {
-            QueryDocumentSnapshot device = w;
+        devices.forEach(device -> {
+            Map<String, Object> deviceInfo = (Map<String, Object>)device.getData().get("deviceInfo");
+            Map<String, Object> nameObject = (Map<String, Object>) device.getData().get("name");
             SyncResponse.Payload.Device.Builder deviceBuilder =
                     new SyncResponse.Payload.Device.Builder()
                             .setId(device.getId())
@@ -73,18 +74,18 @@ public class ActionApp extends SmartHomeApp {
                             .setTraits((List<String>) device.get("traits"))
                             .setName(
                                     DeviceProto.DeviceNames.newBuilder()
-                                            .addAllDefaultNames((List<String>) device.get("defaultNames"))
-                                            .setName((String) device.get("name"))
-                                            .addAllNicknames((List<String>) device.get("nicknames"))
+                                            .addAllDefaultNames((List<String>) nameObject.get("defaultNames"))
+                                            .setName((String) nameObject.get("name"))
+                                            .addAllNicknames((List<String>) nameObject.get("nicknames"))
                                             .build())
                             .setWillReportState((Boolean) device.get("willReportState"))
                             .setRoomHint((String) device.get("roomHint"))
                             .setDeviceInfo(
                                     DeviceProto.DeviceInfo.newBuilder()
-                                            .setManufacturer((String) device.get("manufacturer"))
-                                            .setModel((String) device.get("model"))
-                                            .setHwVersion((String) device.get("hwVersion"))
-                                            .setSwVersion((String) device.get("swVersion"))
+                                            .setManufacturer((String) deviceInfo.get("manufacturer"))
+                                            .setModel((String) deviceInfo.get("model"))
+                                            .setHwVersion((String) deviceInfo.get("hwVersion"))
+                                            .setSwVersion((String) deviceInfo.get("swVersion"))
                                             .build());
             if (device.contains("attributes")) {
                 Map<String, Object> attributes = new HashMap<>();
@@ -105,10 +106,10 @@ public class ActionApp extends SmartHomeApp {
                 // https://github.com/actions-on-google/actions-on-google-java/issues/43 is fixed.
                 String customDataJson = new Gson().toJson(customData);
                 deviceBuilder.setCustomData(customDataJson);
-            }
+            }*/
             if (device.contains("otherDeviceIds")) {
                 deviceBuilder.setOtherDeviceIds((List) device.get("otherDeviceIds"));
-            }*/
+            }
             syncResponse.payload.devices[i.get()] = deviceBuilder.build();
             i.incrementAndGet();
         });
@@ -185,10 +186,11 @@ public class ActionApp extends SmartHomeApp {
                                     .collection("users")
                                     .document(userId)
                                     .collection("devices").document(device.getId());
-                            String deviceName = (String) documentReference.get().get().get("name");
-                            Device concreteDevice = (Device) applicationContext.getBeansWithAnnotation(DeviceType.class).get(deviceName);
+                            Map<String, Object> deviceInfo = (Map<String, Object>) documentReference.get().get().getData().get("deviceInfo");
+                            String model = (String) deviceInfo.get("model");
+                            Device concreteDevice = (Device) applicationContext.getBeansWithAnnotation(DeviceType.class).get(model);
                             if (concreteDevice == null) {
-                                log.error(deviceName + " not found");
+                                log.error(model + " not found");
                                 continue;
                             }
 //                            Device concreteDevice = (Device) applicationContext.getBean((String) documentReference.get().get().get("type"));
