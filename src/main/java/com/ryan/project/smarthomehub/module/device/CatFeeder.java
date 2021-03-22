@@ -1,5 +1,6 @@
 package com.ryan.project.smarthomehub.module.device;
 
+import cn.hutool.core.map.MapUtil;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.DocumentSnapshot;
 import com.ryan.project.smarthomehub.config.DeviceType;
@@ -7,6 +8,7 @@ import com.ryan.project.smarthomehub.module.trait.Dispense;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
@@ -16,7 +18,8 @@ import java.util.concurrent.ExecutionException;
 public class CatFeeder extends Device implements Dispense {
     @Override
     public Map<String, Object> processQuery(DocumentSnapshot device, Map<String, Object> customData) {
-        return super.processQuery(device, customData);
+        List<Map<String, Object>> deviceState = (List<Map<String, Object>>) device.get("states");
+        return MapUtil.of("dispenseItems", deviceState);
     }
 
     @Override
