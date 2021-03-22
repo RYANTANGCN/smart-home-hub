@@ -137,8 +137,12 @@ public class ActionApp extends SmartHomeApp {
                                 .document(userId)
                                 .collection("devices").document(device.getId())
                                 .get().get();
-                        Map<String, Object> deviceState = (Map<String, Object>) documentSnapshot.get("states");
-                        devicesState.put(device.getId(), deviceState);
+                        Map<String, Object> deviceInfo = (Map<String, Object>) documentSnapshot.get("deviceInfo");
+                        String model = (String) deviceInfo.get("model");
+                        Device concreteDevice = (Device) applicationContext.getBeansWithAnnotation(DeviceType.class).get(model);
+                        /*concreteDevice.processQuery(documentSnapshot, device.getCustomData());
+                        Map<String, Object> deviceState = (Map<String, Object>) documentSnapshot.get("states");*/
+                        devicesState.put(device.getId(), concreteDevice.processQuery(documentSnapshot, device.getCustomData()));
                     } catch (InterruptedException e) {
                         devicesState.put(device.getId(), new HashMap<>());
                         e.printStackTrace();
