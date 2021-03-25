@@ -19,7 +19,10 @@ public class CatFeeder extends Device implements Dispense {
     @Override
     public Map<String, Object> processQuery(DocumentSnapshot device, Map<String, Object> customData) {
         List<Map<String, Object>> deviceState = (List<Map<String, Object>>) device.get("states");
-        return MapUtil.of("dispenseItems", deviceState);
+        Map<String, Object> stateMap = MapUtil.of("dispenseItems", deviceState);
+        stateMap.put("online", true);
+        stateMap.put("status", "SUCCESS");
+        return stateMap;
     }
 
     @Override

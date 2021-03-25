@@ -19,6 +19,9 @@ public class Device {
     public Map<String, Object> processQuery(DocumentSnapshot device, Map<String, Object> customData) {
 
         Map<String, Object> deviceState = (Map<String, Object>) device.get("states");
+
+        deviceState.put("online", true);
+        deviceState.put("status", "SUCCESS");
         return deviceState;
     }
 
