@@ -37,13 +37,22 @@ public class CatFeeder extends Device implements Dispense {
 
     @Override
     public void processDispense(DocumentReference documentReference, Map<String, Object> params) {
-        Integer amount = (Integer) params.get("amount");
-        String unit = (String) params.get("CUPS");
-        String item = (String) params.get("item");
+        String presetName = params.containsKey("presetName") ? (String) params.get("presetName") : null;
+        Integer amount = params.containsKey("amount") ? (Integer) params.get("amount") : 0;
+        String unit = params.containsKey("unit") ? (String) params.get("unit") : null;
+        String item = params.containsKey("item") ? (String) params.get("item") : null;
+
+        switch (presetName) {
+            case "cat_bowl":
+                amount = 1;
+                break;
+            default:
+                //do nothing
+        }
 
         try {
 
-            MqttMessage mqttMessage = new MqttMessage(new byte[]{1,amount.byteValue()});
+            MqttMessage mqttMessage = new MqttMessage(new byte[]{1, amount.byteValue()});
             mqttMessage.setQos(0);
 
             //send command to mqtt

@@ -39,7 +39,12 @@ public class Curtain extends Device implements OpenClose {
         try {
             //send command to mqtt
             ObjectMapper objectMapper = new ObjectMapper();
-            MqttMessage mqttMessage = new MqttMessage(objectMapper.writeValueAsBytes(openState));
+            //Doesn't support open or close one side individually
+            Map<String, Object> messageMap = new HashMap<>() {{
+                put("openPercent", openPercent);
+                put("customData", documentReference.get().get().get("customData"));
+            }};
+            MqttMessage mqttMessage = new MqttMessage(objectMapper.writeValueAsBytes(messageMap));
             mqttMessage.setQos(0);
             String topic = "curtain/" + documentReference.getId();
             mqttAsyncClient.publish(topic, mqttMessage);
