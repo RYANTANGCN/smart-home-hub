@@ -40,7 +40,7 @@ public class CatFeeder extends Device implements Dispense {
         String presetName = params.containsKey("presetName") ? (String) params.get("presetName") : null;
         Integer amount = params.containsKey("amount") ? (Integer) params.get("amount") : 0;
         String unit = params.containsKey("unit") ? (String) params.get("unit") : null;
-        String item = params.containsKey("item") ? (String) params.get("item") : null;
+        String item = params.containsKey("item") ? (String) params.get("item") : "cat_food_key";
 
         switch (presetName) {
             case "cat_bowl":
@@ -60,7 +60,7 @@ public class CatFeeder extends Device implements Dispense {
             mqttAsyncClient.publish(topic, mqttMessage);
 
             List<Map<String, Object>> states = (List<Map<String, Object>>) documentReference.get().get().get("states");
-            Map<String, Object> state = states.stream().filter(map -> params.get("item").equals(map.get("itemName"))).findFirst().get();
+            Map<String, Object> state = states.stream().filter(map -> item.equals(map.get("itemName"))).findFirst().get();
             documentReference.update("states", FieldValue.arrayRemove(state));
             Map<String, Object> amountLastDispensed = (Map<String, Object>) state.get("amountLastDispensed");
             amountLastDispensed.put("amount", params.get("amount"));
