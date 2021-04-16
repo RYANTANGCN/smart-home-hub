@@ -42,12 +42,14 @@ public class CatFeeder extends Device implements Dispense {
         String unit = params.containsKey("unit") ? (String) params.get("unit") : null;
         String item = params.containsKey("item") ? (String) params.get("item") : "cat_food_key";
 
-        switch (presetName) {
-            case "cat_bowl":
-                amount = 1;
-                break;
-            default:
-                //do nothing
+        if (presetName != null) {
+            switch (presetName) {
+                case "cat_bowl":
+                    amount = 1;
+                    break;
+                default:
+                    //do nothing
+            }
         }
 
         try {
