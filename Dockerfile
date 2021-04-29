@@ -1,4 +1,5 @@
-FROM adoptopenjdk/openjdk11:alpine-slim
+FROM springci/graalvm-ce:stable-java11-0.10.x
+
 EXPOSE 8080
 WORKDIR /tmp
 COPY build/libs/smart-home-hub-1.0-SNAPSHOT.jar app.jar
