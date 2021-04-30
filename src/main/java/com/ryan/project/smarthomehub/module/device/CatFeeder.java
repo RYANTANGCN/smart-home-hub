@@ -45,7 +45,7 @@ public class CatFeeder extends Device implements Dispense {
         if (presetName != null) {
             switch (presetName) {
                 case "cat_bowl":
-                    amount = System.getProperty("default.feed.cups") == null ? 1 : Integer.valueOf(System.getProperty("default.feed.cups"));
+                    amount = System.getProperty("default.feed.cups") == null ? 4 : Integer.valueOf(System.getProperty("default.feed.cups"));
                     break;
                 default:
                     //do nothing
