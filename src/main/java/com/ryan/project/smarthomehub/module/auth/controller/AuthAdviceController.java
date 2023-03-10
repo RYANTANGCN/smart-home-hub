@@ -12,6 +12,6 @@ public class AuthAdviceController {
 
     @ExceptionHandler(GrantException.class)
     public ResponseEntity authFail(GrantException grantException){
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(grantException.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(grantException.getMessage());
     }
 }
