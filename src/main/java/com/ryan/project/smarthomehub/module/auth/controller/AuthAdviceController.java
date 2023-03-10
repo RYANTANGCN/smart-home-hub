@@ -5,13 +5,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestController;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @ControllerAdvice
 public class AuthAdviceController {
 
     @ExceptionHandler(GrantException.class)
-    public ResponseEntity authFail(GrantException grantException){
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(grantException.getMessage());
+    public ResponseEntity<Map<String,String>> authFail(GrantException grantException){
+        Map<String, String> map = new HashMap<>();
+        map.put("error", "invalid_grant");
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(map);
     }
 }
