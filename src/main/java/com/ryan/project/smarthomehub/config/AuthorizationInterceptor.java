@@ -51,7 +51,7 @@ public class AuthorizationInterceptor extends HandlerInterceptorAdapter {
         if (stringRedisTemplate.hasKey(key)) {
             return true;
         }else {
-            throw new GrantException(String.format("access token:%s not exist or expired", accessToken));
+            throw new GrantException("access token not exist or expired");
         }
     }
 }

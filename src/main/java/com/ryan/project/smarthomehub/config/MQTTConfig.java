@@ -21,19 +21,6 @@ public class MQTTConfig {
     @Autowired
     MqttProperties mqttProperties;
 
-    /*@Bean
-    MqttClient mqttClient() throws MqttException {
-
-            MqttClient mqttClient = new MqttClient(mqttProperties.getBroker(), mqttProperties.getClientId(), new MemoryPersistence());
-            MqttConnectOptions connOpts = new MqttConnectOptions();
-            connOpts.setCleanSession(true);
-            log.info("Connecting to broker: " + mqttProperties.getBroker());
-            mqttClient.connect(connOpts);
-            log.info("broker: "+mqttProperties.getBroker()+" connected");
-
-            return mqttClient;
-    }*/
-
     @Bean
     MqttAsyncClient mqttAsyncClient() throws MqttException {
         MqttAsyncClient mqttAsyncClient = new MqttAsyncClient(mqttProperties.getBroker(), mqttProperties.getClientId(), new MemoryPersistence());
@@ -49,12 +36,12 @@ public class MQTTConfig {
             @Override
             public void connectComplete(boolean reconnect, String serverURI) {
 
-                log.info("broker: "+mqttProperties.getBroker()+" connected");
+                log.info("broker: " + mqttProperties.getBroker() + " connected");
             }
 
             @Override
             public void connectionLost(Throwable cause) {
-                log.error("broker: "+mqttProperties.getBroker()+" connection lost");
+                log.error("broker: " + mqttProperties.getBroker() + " connection lost");
             }
 
             @Override
@@ -65,7 +52,7 @@ public class MQTTConfig {
             @SneakyThrows
             @Override
             public void deliveryComplete(IMqttDeliveryToken token) {
-                log.debug("topic: "+token.getTopics()+" content:"+new String(token.getMessage().getPayload())+" ...delivery completed");
+                log.debug("topic: " + String.join(":", token.getTopics()) + " content:" + new String(token.getMessage().getPayload()) + " ...delivery completed");
             }
         });
         mqttAsyncClient.connect(connOpts);
