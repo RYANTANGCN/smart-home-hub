@@ -35,7 +35,7 @@ public class Vacuum extends Device implements StartStop, Dock {
             mqttMessage.setQos(0);
 
             //send command to mqtt
-            String topic = "vacuum/" + documentReference.getId();
+            String topic = "/vacuum/" + documentReference.getId();
             mqttAsyncClient.publish(topic, mqttMessage);
 
             if (start) {
