@@ -11,6 +11,8 @@ import org.springframework.util.Assert;
 
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * @Descritption
@@ -24,14 +26,14 @@ public class FirestoreConfigTest {
     Firestore database;
 
     @Test
-    public void autoConfigTest() throws ExecutionException, InterruptedException {
+    public void autoConfigTest() throws ExecutionException, InterruptedException, TimeoutException {
 
         Assert.notNull(database,"database should not be null!");
 
         ApiFuture<QuerySnapshot> deviceQuery =
                 database.collection("users").document("1234").collection("devices").get();
 
-        System.out.println(deviceQuery.get().getDocuments().toString());
+        System.out.println(deviceQuery.get(10, TimeUnit.SECONDS).getDocuments().toString());
 
     }
 

@@ -7,6 +7,7 @@ import com.ryan.project.smarthomehub.config.Command;
 import lombok.SneakyThrows;
 
 import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -19,6 +20,10 @@ public class Device {
     public Map<String, Object> processQuery(DocumentSnapshot device, Map<String, Object> customData) {
 
         Map<String, Object> deviceState = (Map<String, Object>) device.get("states");
+
+        if (deviceState==null){
+            deviceState = new HashMap<>();
+        }
 
         deviceState.put("online", true);
         deviceState.put("status", "SUCCESS");
