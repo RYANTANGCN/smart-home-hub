@@ -183,7 +183,7 @@ public class ActionApp extends SmartHomeApp {
                     //Execution List
                     for (ExecuteRequest.Inputs.Payload.Commands.Execution execution : command.execution) {
 
-                        respCommand.getStates().putAll(execution.getParams());
+//                        respCommand.getStates().putAll(execution.getParams());
                         //Device List
                         for (ExecuteRequest.Inputs.Payload.Commands.Devices device : command.devices) {
                             DocumentReference documentReference = database

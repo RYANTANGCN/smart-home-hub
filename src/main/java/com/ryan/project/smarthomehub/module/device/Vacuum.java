@@ -22,7 +22,18 @@ public class Vacuum extends Device implements StartStop, Dock {
 
     @Override
     public void processDock(DocumentReference documentReference, Map<String, Object> params) {
-        documentReference.update("states.dock", true);
+        try {
+            //mqtt
+            MqttMessage mqttMessage = new MqttMessage(("stop").getBytes());
+            mqttMessage.setQos(0);
+
+            //send command to mqtt
+            String topic = "/vacuum/" + documentReference.getId();
+            mqttAsyncClient.publish(topic, mqttMessage);
+            documentReference.update("states.dock", true);
+        }catch (Exception e){
+            log.error("", e);
+        }
     }
 
     @Override
