@@ -7,6 +7,6 @@ import java.util.Map;
 
 public interface TemperatureSetting {
 
-    @Command("action.devices.traits.TemperatureSetting")
-    void processTemperatureSetting(DocumentReference documentSnapshot, Map<String, Object> params);
+    @Command("action.devices.commands.ThermostatTemperatureSetpoint")
+    void processTemperatureSetPoint(DocumentReference documentSnapshot, Map<String, Object> params);
 }
