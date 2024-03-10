@@ -6,7 +6,7 @@ plugins {
 
 group = 'com.ryan.project'
 version = '1.0-SNAPSHOT'
-sourceCompatibility = '11'
+sourceCompatibility = '17'
 
 configurations {
     compileOnly {
