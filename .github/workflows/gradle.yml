@@ -5,7 +5,7 @@ name: Java CI with Gradle
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master,develop ]
   pull_request:
     branches: [ master ]
 
@@ -34,6 +34,6 @@ jobs:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
     - name: build and push
-      run: docker build -t ryantang/smart-home-hub . && docker push ryantang/smart-home-hub
+      run: docker build -t ryantang/smart-home-hub:${{ github.ref }} . && docker push ryantang/smart-home-hub:${{ github.ref }}
     - name: Image digest
       run: echo ${{ steps.docker_build.outputs.digest }}

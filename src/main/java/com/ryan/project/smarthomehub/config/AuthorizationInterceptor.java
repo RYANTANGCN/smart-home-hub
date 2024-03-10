@@ -3,14 +3,13 @@ package com.ryan.project.smarthomehub.config;
 import cn.hutool.core.util.StrUtil;
 import com.ryan.project.smarthomehub.config.properties.HubProperties;
 import com.ryan.project.smarthomehub.exception.GrantException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import org.springframework.web.servlet.HandlerInterceptor;
 import java.util.stream.Collectors;
 
 /**
@@ -20,7 +19,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Component
-public class AuthorizationInterceptor extends HandlerInterceptorAdapter {
+public class AuthorizationInterceptor implements HandlerInterceptor {
 
     @Autowired
     HubProperties hubProperties;

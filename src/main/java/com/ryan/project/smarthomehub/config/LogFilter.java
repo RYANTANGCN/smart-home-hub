@@ -1,10 +1,10 @@
 package com.ryan.project.smarthomehub.config;
 
+import jakarta.servlet.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.catalina.connector.RequestFacade;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.*;
 import java.io.IOException;
 import java.util.Iterator;
 
