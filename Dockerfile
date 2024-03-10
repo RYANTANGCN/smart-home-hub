@@ -1,4 +1,4 @@
-FROM adoptopenjdk/openjdk11:alpine-slim
+FROM eclipse-temurin:17-jre-alpine
 
 EXPOSE 8080
 WORKDIR /tmp

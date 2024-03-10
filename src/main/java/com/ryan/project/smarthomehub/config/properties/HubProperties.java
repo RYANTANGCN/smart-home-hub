@@ -11,6 +11,7 @@ import java.util.List;
 @ConfigurationProperties(prefix = "smart-home-hub")
 public class HubProperties {
 
+    //this is google-action project id, same as firebase project id
     private String projectId;
 
     private String ssoUrl;

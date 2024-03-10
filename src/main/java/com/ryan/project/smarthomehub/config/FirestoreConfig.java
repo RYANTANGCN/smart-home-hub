@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Configuration;
 import javax.annotation.PostConstruct;
 
 /**
- * @Descritption
+ * @Descritption Firebase configuration class, more detail refer to: https://firebase.google.com/docs/admin/setup
  * @Date 2020/11/3
  * @Author tangqianli
  */
@@ -25,25 +25,19 @@ public class FirestoreConfig {
     @Autowired
     HubProperties hubProperties;
 
-    private Firestore database;
-
-    @PostConstruct
-    public void init(){
+    @Bean
+    public Firestore init(){
         try {
             GoogleCredentials credentials = GoogleCredentials.getApplicationDefault();
             FirebaseOptions options =
                     new FirebaseOptions.Builder().setCredentials(credentials).setProjectId(hubProperties.getProjectId()).build();
-            FirebaseApp.initializeApp(options);
-            database = FirestoreClient.getFirestore();
+            FirebaseApp firebaseApp = FirebaseApp.initializeApp(options);
+            Firestore database = FirestoreClient.getFirestore(firebaseApp);
             log.info("Firestore init finished......");
+            return database;
         } catch (Exception e) {
             log.error("ERROR: invalid service account credentials. See README.");
             throw new RuntimeException(e.getMessage());
         }
-    }
-
-    @Bean
-    public Firestore database(){
-        return this.database;
     }
 }
