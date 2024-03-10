@@ -34,6 +34,6 @@ jobs:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
     - name: build and push
-      run: docker build -t ryantang/smart-home-hub:${{ github.ref }} . && docker push ryantang/smart-home-hub:${{ github.ref }}
+      run: docker build -t ryantang/smart-home-hub:${BRANCH_NAME} . && docker push ryantang/smart-home-hub:${BRANCH_NAME}
     - name: Image digest
       run: echo ${{ steps.docker_build.outputs.digest }}
