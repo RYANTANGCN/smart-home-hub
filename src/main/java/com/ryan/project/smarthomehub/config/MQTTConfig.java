@@ -1,6 +1,7 @@
 package com.ryan.project.smarthomehub.config;
 
 import com.ryan.project.smarthomehub.config.properties.MqttProperties;
+import com.ryan.project.smarthomehub.module.fullfillment.service.DeviceStateListener;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.paho.client.mqttv3.*;
@@ -21,6 +22,9 @@ public class MQTTConfig {
     @Autowired
     MqttProperties mqttProperties;
 
+    @Autowired
+    DeviceStateListener deviceStateListener;
+
     @Bean
     MqttAsyncClient mqttAsyncClient() throws MqttException {
         MqttAsyncClient mqttAsyncClient = new MqttAsyncClient(mqttProperties.getBroker(), mqttProperties.getClientId(), new MemoryPersistence());
@@ -37,6 +41,16 @@ public class MQTTConfig {
             public void connectComplete(boolean reconnect, String serverURI) {
 
                 log.info("broker: " + mqttProperties.getBroker() + " connected");
+
+
+                //subscribe devices' states topic
+                try {
+                    mqttAsyncClient.subscribe("state/#",0, deviceStateListener);
+                    log.info("subscribe topic: state/#");
+                } catch (MqttException e) {
+                    log.error("error subscribe topic: state/#");
+                    throw new RuntimeException(e);
+                }
             }
 
             @Override
@@ -56,6 +70,7 @@ public class MQTTConfig {
             }
         });
         mqttAsyncClient.connect(connOpts);
+
         return mqttAsyncClient;
     }
 }

@@ -21,7 +21,7 @@ public class Device {
 
         Map<String, Object> deviceState = (Map<String, Object>) device.get("states");
 
-        if (deviceState==null){
+        if (deviceState == null) {
             deviceState = new HashMap<>();
         }
 
@@ -32,17 +32,17 @@ public class Device {
 
     @SneakyThrows
     public String processTraits(DocumentReference device, ExecuteRequest.Inputs.Payload.Commands.Execution execution) {
-            for (Class<?> anInterface : this.getClass().getInterfaces()) {
-                for (Method method : anInterface.getMethods()) {
-                    if (method.isAnnotationPresent(Command.class)) {
-                        Command command = method.getAnnotation(Command.class);
+        for (Class<?> anInterface : this.getClass().getInterfaces()) {
+            for (Method method : anInterface.getMethods()) {
+                if (method.isAnnotationPresent(Command.class)) {
+                    Command command = method.getAnnotation(Command.class);
 
-                        if (execution.command.equals(command.value())) {
-                            method.invoke(this, device, execution.getParams());
-                        }
+                    if (execution.command.equals(command.value())) {
+                        method.invoke(this, device, execution.getParams());
                     }
                 }
             }
+        }
         return device.getId();
     }
 }
