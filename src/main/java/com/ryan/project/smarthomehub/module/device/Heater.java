@@ -58,7 +58,7 @@ public class Heater extends Device implements TemperatureSetting, OnOff {
             mqttMessage.setQos(0);
 
             //send command to mqtt
-            String topic = "heater/" + documentReference.getId();
+            String topic = "/heater/" + documentReference.getId();
             mqttAsyncClient.publish(topic, mqttMessage);
 
             //update firestore date
