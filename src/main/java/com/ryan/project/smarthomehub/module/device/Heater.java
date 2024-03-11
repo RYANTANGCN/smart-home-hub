@@ -89,8 +89,8 @@ public class Heater extends Device implements TemperatureSetting, OnOff, DeviceS
         try {
             JsonElement jsonElement = JsonParser.parseString(message);
             BigDecimal environmentTemperature = jsonElement.getAsJsonObject().get("environment_temperature").getAsBigDecimal();
-            String oldTemperature = documentReference.get().get().get("states.thermostatTemperatureAmbient", String.class);
-            if (new BigDecimal(oldTemperature).intValue()!=(environmentTemperature.intValue())) {
+            Long oldTemperature = documentReference.get().get().get("states.thermostatTemperatureAmbient",Long.class);
+            if (BigDecimal.valueOf(oldTemperature).intValue()!=(environmentTemperature.intValue())) {
                 documentReference.update("states.thermostatTemperatureAmbient", environmentTemperature.intValue());
             }
         } catch (Exception e) {
