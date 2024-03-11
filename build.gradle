@@ -28,6 +28,7 @@ dependencies {
 //    implementation 'com.google.protobuf:protobuf-java:3.10.0'
 //    implementation 'com.google.protobuf:protobuf-java-util:3.10.0'
 
+    implementation 'com.google.apis:google-api-services-homegraph:v1-rev20230707-2.0.0'
     implementation 'com.google.firebase:firebase-admin:9.2.0'
 //    implementation 'com.google.cloud:google-cloud-firestore:1.31.0'
 //    implementation 'com.google.auth:google-auth-library-oauth2-http:0.18.0'
