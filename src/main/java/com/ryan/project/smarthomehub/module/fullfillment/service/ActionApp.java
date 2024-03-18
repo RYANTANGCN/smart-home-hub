@@ -59,7 +59,7 @@ public class ActionApp extends SmartHomeApp {
         List<QueryDocumentSnapshot> devices = database
                 .collection("users")
                 .document(userId)
-                .collection("devices")
+                .collection("devices").whereEqualTo("customData.linkGoogleHome",true)
                 .get().get().getDocuments();
         log.debug("query user:{} devices count:{}", userId, devices.size());
         syncResponse.payload.devices = new SyncResponse.Payload.Device[devices.size()];

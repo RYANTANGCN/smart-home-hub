@@ -12,6 +12,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.ryan.project.smarthomehub.config.DeviceType;
+import com.ryan.project.smarthomehub.module.event.ReportStateEvent;
 import com.ryan.project.smarthomehub.module.trait.DeviceStateReport;
 import com.ryan.project.smarthomehub.module.trait.OnOff;
 import com.ryan.project.smarthomehub.module.trait.TemperatureSetting;
@@ -20,6 +21,7 @@ import org.eclipse.paho.client.mqttv3.MqttAsyncClient;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
@@ -43,6 +45,9 @@ public class Heater extends Device implements TemperatureSetting, OnOff, DeviceS
     @Autowired
     HomeGraphService homeGraphService;
 
+    @Autowired
+    ApplicationEventPublisher applicationEventPublisher;
+
     private String beanName;
 
     private Gson gson = new Gson();
@@ -55,6 +60,9 @@ public class Heater extends Device implements TemperatureSetting, OnOff, DeviceS
     @Override
     public void processTemperatureSetPoint(DocumentReference documentReference, Map<String, Object> params) {
         log.info("received command:{}", params);
+
+        String deviceId = documentReference.getParent().getId();
+        String userId = documentReference.getParent().getParent().getId();
         Integer degrees = (Integer) params.get("thermostatTemperatureSetpoint");
         try {
             //mqtt
@@ -70,6 +78,13 @@ public class Heater extends Device implements TemperatureSetting, OnOff, DeviceS
 
             //update firestore date
             documentReference.update("states.thermostatTemperatureSetpoint", degrees);
+
+            // Report device state.
+            applicationEventPublisher.publishEvent(new ReportStateEvent(this,userId,new HashMap<>() {
+                {
+                    put(deviceId, new HashMap<>(){{put("thermostatTemperatureSetpoint", degrees);}});
+                }
+            }));
         } catch (Exception e) {
             log.error("", e);
         }
@@ -78,7 +93,9 @@ public class Heater extends Device implements TemperatureSetting, OnOff, DeviceS
     @Override
     public void processOnOff(DocumentReference documentReference, Map<String, Object> params) {
         log.info("received command:{}", params);
+        String deviceId = documentReference.getParent().getId();
         boolean on = (Boolean) params.get("on");
+        String userId = documentReference.getParent().getParent().getId();
         try {
             //mqtt
             Map<String, Object> mqttMsg = new HashMap<>();
@@ -92,6 +109,11 @@ public class Heater extends Device implements TemperatureSetting, OnOff, DeviceS
 
             //update firestore date
             documentReference.update("states.on", on);
+
+            // Report device state.
+            applicationEventPublisher.publishEvent(new ReportStateEvent(this, userId, new HashMap() {{
+                put(deviceId, new HashMap<>(){{put("on", on);}});
+            }}));
         } catch (Exception e) {
             log.error("", e);
         }
@@ -117,7 +139,7 @@ public class Heater extends Device implements TemperatureSetting, OnOff, DeviceS
             Boolean lastOnState = documentSnapshot.get("states.on", Boolean.class);
 
 
-            Map<String,Object> states = (Map<String, Object>) documentSnapshot.get("states");
+            Map<String, Object> states = (Map<String, Object>) documentSnapshot.get("states");
 
             Map<String, Object> updateMap = new HashMap<>();
             if (lastThermostatTemperatureAmbient != (thermostatTemperatureAmbient.longValue())) {
@@ -138,16 +160,7 @@ public class Heater extends Device implements TemperatureSetting, OnOff, DeviceS
                 log.info("{} update states:{}", beanName, updateMap);
 
                 // Report device state.
-                ReportStateAndNotificationRequest request =
-                        new ReportStateAndNotificationRequest()
-                                .setRequestId(UUID.randomUUID().toString())
-                                .setAgentUserId(userId)
-                                .setPayload(
-                                        new StateAndNotificationPayload()
-                                                .setDevices(
-                                                        new ReportStateAndNotificationDevice()
-                                                                .setStates(Map.of(deviceId, states))));
-                log.info("reportState:{}", homeGraphService.devices().reportStateAndNotification(request).execute().toString());
+                applicationEventPublisher.publishEvent(new ReportStateEvent(this, userId, states));
             }
         } catch (Exception e) {
             log.error("error update environment temperature", e);
