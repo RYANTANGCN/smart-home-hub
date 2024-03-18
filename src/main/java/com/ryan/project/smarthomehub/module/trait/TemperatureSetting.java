@@ -9,4 +9,7 @@ public interface TemperatureSetting {
 
     @Command("action.devices.commands.ThermostatTemperatureSetpoint")
     void processTemperatureSetPoint(DocumentReference documentSnapshot, Map<String, Object> params);
+
+    @Command("action.devices.commands.ThermostatSetMode")
+    void processThermostatSetMode(DocumentReference documentReference, Map<String, Object> params);
 }

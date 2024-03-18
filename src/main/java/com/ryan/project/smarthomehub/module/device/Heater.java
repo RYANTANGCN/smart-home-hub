@@ -61,7 +61,7 @@ public class Heater extends Device implements TemperatureSetting, OnOff, DeviceS
     public void processTemperatureSetPoint(DocumentReference documentReference, Map<String, Object> params) {
         log.info("received command:{}", params);
 
-        String deviceId = documentReference.getParent().getId();
+        String deviceId = documentReference.getId();
         String userId = documentReference.getParent().getParent().getId();
         Integer degrees = (Integer) params.get("thermostatTemperatureSetpoint");
         try {
@@ -80,11 +80,46 @@ public class Heater extends Device implements TemperatureSetting, OnOff, DeviceS
             documentReference.update("states.thermostatTemperatureSetpoint", degrees);
 
             // Report device state.
-            applicationEventPublisher.publishEvent(new ReportStateEvent(this,userId,new HashMap<>() {
+            applicationEventPublisher.publishEvent(new ReportStateEvent(this, userId, new HashMap<>() {
                 {
-                    put(deviceId, new HashMap<>(){{put("thermostatTemperatureSetpoint", degrees);}});
+                    put(deviceId, new HashMap<>() {{
+                        put("thermostatTemperatureSetpoint", degrees);
+                    }});
                 }
             }));
+        } catch (Exception e) {
+            log.error("", e);
+        }
+    }
+
+    @Override
+    public void processThermostatSetMode(DocumentReference documentReference, Map<String, Object> params) {
+        log.info("received command:{}", params);
+        String deviceId = documentReference.getId();
+        String thermostatMode = (String) params.get("thermostatMode");
+        String userId = documentReference.getParent().getParent().getId();
+        try {
+            //mqtt
+            Map<String, Object> mqttMsg = new HashMap<>();
+            mqttMsg.put("on", "auto".equals(thermostatMode) ? true : false);
+            MqttMessage mqttMessage = new MqttMessage(gson.toJson(mqttMsg).toString().getBytes());
+            mqttMessage.setQos(0);
+
+            //send command to mqtt
+            String topic = "heater/" + documentReference.getId();
+            mqttAsyncClient.publish(topic, mqttMessage);
+
+            //update firestore date
+            Map<String, Object> updateMap = new HashMap<>();
+            updateMap.put("states.activeThermostatMode", thermostatMode);
+            updateMap.put("states.thermostatMode", thermostatMode);
+            documentReference.update(updateMap);
+
+            // Report device state.
+            Map<String, Object> reportMap = new HashMap<>();
+            updateMap.put("activeThermostatMode", thermostatMode);
+            updateMap.put("thermostatMode", thermostatMode);
+            applicationEventPublisher.publishEvent(new ReportStateEvent(this, userId, reportMap));
         } catch (Exception e) {
             log.error("", e);
         }
@@ -112,7 +147,9 @@ public class Heater extends Device implements TemperatureSetting, OnOff, DeviceS
 
             // Report device state.
             applicationEventPublisher.publishEvent(new ReportStateEvent(this, userId, new HashMap() {{
-                put(deviceId, new HashMap<>(){{put("on", on);}});
+                put(deviceId, new HashMap<>() {{
+                    put("on", on);
+                }});
             }}));
         } catch (Exception e) {
             log.error("", e);
