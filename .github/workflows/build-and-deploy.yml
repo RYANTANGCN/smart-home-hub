@@ -37,3 +37,14 @@ jobs:
       run: docker build -t ryantang/smart-home-hub:${GITHUB_REF##*/} . && docker push ryantang/smart-home-hub:${GITHUB_REF##*/}
     - name: Image digest
       run: echo ${{ steps.docker_build.outputs.digest }}
+
+  depoly:
+    needs: build
+    steps:
+      - uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.PORT }}
+          script: cd ${{ secrets.PROJECT_HOME_DIR }} && sudo docker-compose pull && sudo docker-compose up -d
