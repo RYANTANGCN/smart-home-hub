@@ -1,5 +1,9 @@
 package com.ryan.project.smarthomehub.module.device;
 
+import com.google.api.services.homegraph.v1.HomeGraphService;
+import com.google.api.services.homegraph.v1.model.ReportStateAndNotificationDevice;
+import com.google.api.services.homegraph.v1.model.ReportStateAndNotificationRequest;
+import com.google.api.services.homegraph.v1.model.StateAndNotificationPayload;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
@@ -22,6 +26,7 @@ import org.springframework.util.Assert;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 @Slf4j
 @DeviceType("action.devices.types.HEATER")
@@ -34,6 +39,9 @@ public class Heater extends Device implements TemperatureSetting, OnOff, DeviceS
 
     @Autowired
     Firestore database;
+
+    @Autowired
+    HomeGraphService homeGraphService;
 
     private String beanName;
 
@@ -98,22 +106,48 @@ public class Heater extends Device implements TemperatureSetting, OnOff, DeviceS
         Assert.notNull(documentReference, "device should not be null with deviceId:" + deviceId);
         try {
             JsonObject jsonObject = JsonParser.parseString(message).getAsJsonObject();
-            BigDecimal environmentTemperature = jsonObject.get("environment_temperature").getAsBigDecimal();
+            BigDecimal environmentTemperature = jsonObject.get("thermostatTemperatureSetpoint").getAsBigDecimal();
+            BigDecimal thermostatTemperatureSetpoint = jsonObject.get("thermostatTemperatureSetpoint").getAsBigDecimal();
             Boolean onState = jsonObject.get("on").getAsBoolean();
             DocumentSnapshot documentSnapshot = documentReference.get().get();
-            Long lastTemperature = documentSnapshot.get("states.thermostatTemperatureAmbient", Long.class);
+
+            //get last states' value
+            Long lastThermostatTemperatureAmbient = documentSnapshot.get("states.thermostatTemperatureAmbient", Long.class);
+            Long lastThermostatTemperatureSetpoint = documentSnapshot.get("states.thermostatTemperatureSetpoint", Long.class);
             Boolean lastOnState = documentSnapshot.get("states.on", Boolean.class);
 
+
+            Map<String,Object> states = (Map<String, Object>) documentSnapshot.get("states");
+
             Map<String, Object> updateMap = new HashMap<>();
-            if (BigDecimal.valueOf(lastTemperature).intValue() != (environmentTemperature.intValue())) {
+            if (lastThermostatTemperatureAmbient.intValue() != (environmentTemperature.intValue())) {
                 updateMap.put("states.thermostatTemperatureAmbient", environmentTemperature.intValue());
+                states.put("thermostatTemperatureAmbient", environmentTemperature.intValue());
+            }
+            if (lastThermostatTemperatureSetpoint.intValue() != thermostatTemperatureSetpoint.intValue()) {
+                updateMap.put("states.thermostatTemperatureSetpoint", thermostatTemperatureSetpoint);
+                states.put("thermostatTemperatureSetpoint", thermostatTemperatureSetpoint);
             }
             if (!onState.equals(lastOnState)) {
                 updateMap.put("states.on", onState);
+                states.put("on", onState);
             }
             if (!updateMap.isEmpty()) {
+                //update firestore database
                 documentReference.update(updateMap);
                 log.info("{} update states:{}", beanName, updateMap);
+
+                // Report device state.
+                ReportStateAndNotificationRequest request =
+                        new ReportStateAndNotificationRequest()
+                                .setRequestId(UUID.randomUUID().toString())
+                                .setAgentUserId(userId)
+                                .setPayload(
+                                        new StateAndNotificationPayload()
+                                                .setDevices(
+                                                        new ReportStateAndNotificationDevice()
+                                                                .setStates(Map.of(deviceId, states))));
+                log.info("reportState:{}", homeGraphService.devices().reportStateAndNotification(request).execute().toString());
             }
         } catch (Exception e) {
             log.error("error update environment temperature", e);
