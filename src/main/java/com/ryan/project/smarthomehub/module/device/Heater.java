@@ -109,12 +109,14 @@ public class Heater extends Device implements TemperatureSetting, OnOff, DeviceS
             Map<String, Object> updateMap = new HashMap<>();
             updateMap.put("states.activeThermostatMode", thermostatMode);
             updateMap.put("states.thermostatMode", thermostatMode);
+            updateMap.put("on", "auto".equals(thermostatMode) ? true : false);
             documentReference.update(updateMap);
 
             // Report device state.
             Map<String, Object> reportMap = (Map<String, Object>) documentReference.get().get().get("states");
-            updateMap.put("activeThermostatMode", thermostatMode);
-            updateMap.put("thermostatMode", thermostatMode);
+            reportMap.put("activeThermostatMode", thermostatMode);
+            reportMap.put("thermostatMode", thermostatMode);
+            reportMap.put("on", "auto".equals(thermostatMode) ? true : false);
             applicationEventPublisher.publishEvent(new ReportStateEvent(this, userId, reportMap));
         } catch (Exception e) {
             log.error("", e);
@@ -139,14 +141,18 @@ public class Heater extends Device implements TemperatureSetting, OnOff, DeviceS
             mqttAsyncClient.publish(topic, mqttMessage);
 
             //update firestore date
-            documentReference.update("states.on", on);
+            Map<String, Object> updateMap = new HashMap<>();
+            updateMap.put("states.activeThermostatMode", on?"auto":"off");
+            updateMap.put("states.thermostatMode", on?"auto":"off");
+            updateMap.put("states.on", on);
+            documentReference.update(updateMap);
 
             // Report device state.
-            applicationEventPublisher.publishEvent(new ReportStateEvent(this, userId, new HashMap() {{
-                put(deviceId, new HashMap<>() {{
-                    put("on", on);
-                }});
-            }}));
+            Map<String, Object> reportMap = (Map<String, Object>) documentReference.get().get().get("states");
+            reportMap.put("activeThermostatMode", on?"auto":"off");
+            reportMap.put("thermostatMode", on?"auto":"off");
+            reportMap.put("on", on);
+            applicationEventPublisher.publishEvent(new ReportStateEvent(this, userId, reportMap));
         } catch (Exception e) {
             log.error("", e);
         }
