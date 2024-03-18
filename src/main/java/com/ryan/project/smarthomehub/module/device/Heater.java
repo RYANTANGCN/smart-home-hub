@@ -80,13 +80,9 @@ public class Heater extends Device implements TemperatureSetting, OnOff, DeviceS
             documentReference.update("states.thermostatTemperatureSetpoint", degrees);
 
             // Report device state.
-            applicationEventPublisher.publishEvent(new ReportStateEvent(this, userId, new HashMap<>() {
-                {
-                    put(deviceId, new HashMap<>() {{
-                        put("thermostatTemperatureSetpoint", degrees);
-                    }});
-                }
-            }));
+            Map<String, Object> reportMap = (Map<String, Object>) documentReference.get().get().get("states");
+            reportMap.put("thermostatTemperatureSetpoint", degrees);
+            applicationEventPublisher.publishEvent(new ReportStateEvent(this, userId, reportMap));
         } catch (Exception e) {
             log.error("", e);
         }
@@ -116,7 +112,7 @@ public class Heater extends Device implements TemperatureSetting, OnOff, DeviceS
             documentReference.update(updateMap);
 
             // Report device state.
-            Map<String, Object> reportMap = new HashMap<>();
+            Map<String, Object> reportMap = (Map<String, Object>) documentReference.get().get().get("states");
             updateMap.put("activeThermostatMode", thermostatMode);
             updateMap.put("thermostatMode", thermostatMode);
             applicationEventPublisher.publishEvent(new ReportStateEvent(this, userId, reportMap));
