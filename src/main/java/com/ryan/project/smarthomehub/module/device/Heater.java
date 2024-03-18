@@ -106,7 +106,7 @@ public class Heater extends Device implements TemperatureSetting, OnOff, DeviceS
         Assert.notNull(documentReference, "device should not be null with deviceId:" + deviceId);
         try {
             JsonObject jsonObject = JsonParser.parseString(message).getAsJsonObject();
-            BigDecimal environmentTemperature = jsonObject.get("thermostatTemperatureSetpoint").getAsBigDecimal();
+            BigDecimal thermostatTemperatureAmbient = jsonObject.get("thermostatTemperatureAmbient").getAsBigDecimal();
             BigDecimal thermostatTemperatureSetpoint = jsonObject.get("thermostatTemperatureSetpoint").getAsBigDecimal();
             Boolean onState = jsonObject.get("on").getAsBoolean();
             DocumentSnapshot documentSnapshot = documentReference.get().get();
@@ -120,13 +120,13 @@ public class Heater extends Device implements TemperatureSetting, OnOff, DeviceS
             Map<String,Object> states = (Map<String, Object>) documentSnapshot.get("states");
 
             Map<String, Object> updateMap = new HashMap<>();
-            if (lastThermostatTemperatureAmbient.intValue() != (environmentTemperature.intValue())) {
-                updateMap.put("states.thermostatTemperatureAmbient", environmentTemperature.intValue());
-                states.put("thermostatTemperatureAmbient", environmentTemperature.intValue());
+            if (lastThermostatTemperatureAmbient != (thermostatTemperatureAmbient.longValue())) {
+                updateMap.put("states.thermostatTemperatureAmbient", thermostatTemperatureAmbient.longValue());
+                states.put("thermostatTemperatureAmbient", thermostatTemperatureAmbient.longValue());
             }
-            if (lastThermostatTemperatureSetpoint.intValue() != thermostatTemperatureSetpoint.intValue()) {
-                updateMap.put("states.thermostatTemperatureSetpoint", thermostatTemperatureSetpoint);
-                states.put("thermostatTemperatureSetpoint", thermostatTemperatureSetpoint);
+            if (lastThermostatTemperatureSetpoint != thermostatTemperatureSetpoint.longValue()) {
+                updateMap.put("states.thermostatTemperatureSetpoint", thermostatTemperatureSetpoint.longValue());
+                states.put("thermostatTemperatureSetpoint", thermostatTemperatureSetpoint.longValue());
             }
             if (!onState.equals(lastOnState)) {
                 updateMap.put("states.on", onState);
