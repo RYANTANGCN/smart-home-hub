@@ -93,7 +93,7 @@ public class Heater extends Device implements TemperatureSetting, OnOff, DeviceS
     @Override
     public void processOnOff(DocumentReference documentReference, Map<String, Object> params) {
         log.info("received command:{}", params);
-        String deviceId = documentReference.getParent().getId();
+        String deviceId = documentReference.getId();
         boolean on = (Boolean) params.get("on");
         String userId = documentReference.getParent().getParent().getId();
         try {
