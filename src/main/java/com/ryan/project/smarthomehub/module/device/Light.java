@@ -21,7 +21,7 @@ import java.util.Map;
  */
 @Slf4j
 @DeviceType("action.devices.types.LIGHT")
-@Service("virtual_led_light")
+@Service("yeelink_light_lamp1")
 public class Light extends Device implements OnOff , BeanNameAware {
 
     @Autowired
