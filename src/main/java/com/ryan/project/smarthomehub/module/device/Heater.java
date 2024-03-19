@@ -72,7 +72,7 @@ public class Heater extends Device implements TemperatureSetting, OnOff, DeviceS
             mqttMessage.setQos(0);
 
             //send command to mqtt
-            String topic = String.format("heater/%s/%s/%s", userId, beanName, documentReference.getId());
+            String topic = String.format("heater/%s/%s/%s", userId, beanName, deviceId);
             mqttAsyncClient.publish(topic, mqttMessage);
 
             //update firestore date
@@ -103,7 +103,7 @@ public class Heater extends Device implements TemperatureSetting, OnOff, DeviceS
             mqttMessage.setQos(0);
 
             //send command to mqtt
-            String topic = String.format("heater/%s/%s/%s", userId, beanName, documentReference.getId());
+            String topic = String.format("heater/%s/%s/%s", userId, beanName, deviceId);
             mqttAsyncClient.publish(topic, mqttMessage);
 
             //update firestore date

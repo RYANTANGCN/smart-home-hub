@@ -1,14 +1,17 @@
 package com.ryan.project.smarthomehub.module.device;
 
 import com.google.cloud.firestore.DocumentReference;
+import com.google.gson.Gson;
 import com.ryan.project.smarthomehub.config.DeviceType;
 import com.ryan.project.smarthomehub.module.trait.OnOff;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.paho.client.mqttv3.MqttAsyncClient;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -19,26 +22,38 @@ import java.util.Map;
 @Slf4j
 @DeviceType("action.devices.types.LIGHT")
 @Service("virtual_led_light")
-public class Light extends Device implements OnOff {
+public class Light extends Device implements OnOff , BeanNameAware {
 
     @Autowired
     MqttAsyncClient mqttAsyncClient;
+
+    private String beanName;
+
+    private Gson gson = new Gson();
+
+    @Override
+    public void setBeanName(String name) {
+        this.beanName = name;
+    }
 
     @Override
     public void processOnOff(DocumentReference documentReference, Map<String, Object> params) {
 
         log.debug("process light OnOff command,params:{}", params);
         boolean on = (boolean) params.get("on");
-        byte b = on?(byte)1:(byte)0;
+        String deviceId = documentReference.getId();
+        String userId = documentReference.getParent().getParent().getId();
+        Map<String, Object> map = new HashMap<>(){{
+            put("on", on);
+        }};
 
         try {
             //mqtt
-//            ObjectMapper objectMapper = new ObjectMapper();
-            MqttMessage mqttMessage = new MqttMessage(new byte[]{0,b});
+            MqttMessage mqttMessage = new MqttMessage(gson.toJson(map).getBytes());
             mqttMessage.setQos(0);
 
             //send command to mqtt
-            String topic = "light/" + documentReference.getId();
+           String topic = String.format("light/%s/%s/%s", userId, beanName, deviceId);
             mqttAsyncClient.publish(topic, mqttMessage);
 
             //update firestore date
