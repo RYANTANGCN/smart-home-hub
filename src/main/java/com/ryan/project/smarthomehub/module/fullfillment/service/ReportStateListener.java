@@ -5,6 +5,7 @@ import com.google.api.services.homegraph.v1.model.ReportStateAndNotificationDevi
 import com.google.api.services.homegraph.v1.model.ReportStateAndNotificationRequest;
 import com.google.api.services.homegraph.v1.model.ReportStateAndNotificationResponse;
 import com.google.api.services.homegraph.v1.model.StateAndNotificationPayload;
+import com.google.gson.Gson;
 import com.ryan.project.smarthomehub.module.event.ReportStateEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,8 @@ public class ReportStateListener implements ApplicationListener<ReportStateEvent
     @Autowired
     HomeGraphService homeGraphService;
 
+    private Gson gson = new Gson();
+
     @Override
     public void onApplicationEvent(ReportStateEvent event) {
         String requestId = UUID.randomUUID().toString();
@@ -35,7 +38,9 @@ public class ReportStateListener implements ApplicationListener<ReportStateEvent
                                         .setDevices(
                                                 new ReportStateAndNotificationDevice()
                                                         .setStates(event.getStates())));
+
         try {
+            log.info("report state payload: {}", gson.toJson(event.getStates()));
             ReportStateAndNotificationResponse response = homeGraphService.devices().reportStateAndNotification(request).execute();
             log.info("report state response: {}", response.toPrettyString());
         } catch (Exception e) {

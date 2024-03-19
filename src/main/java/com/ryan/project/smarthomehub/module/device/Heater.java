@@ -72,8 +72,7 @@ public class Heater extends Device implements TemperatureSetting, OnOff, DeviceS
             mqttMessage.setQos(0);
 
             //send command to mqtt
-            //TODO should add user ID to the topic
-            String topic = "heater/" + documentReference.getId();
+            String topic = String.format("heater/%s/%s/%s", userId, beanName, documentReference.getId());
             mqttAsyncClient.publish(topic, mqttMessage);
 
             //update firestore date
@@ -82,7 +81,9 @@ public class Heater extends Device implements TemperatureSetting, OnOff, DeviceS
             // Report device state.
             Map<String, Object> reportMap = (Map<String, Object>) documentReference.get().get().get("states");
             reportMap.put("thermostatTemperatureSetpoint", degrees);
-            applicationEventPublisher.publishEvent(new ReportStateEvent(this, userId, reportMap));
+            applicationEventPublisher.publishEvent(new ReportStateEvent(this, userId, new HashMap() {{
+                put(deviceId, reportMap);
+            }}));
         } catch (Exception e) {
             log.error("", e);
         }
@@ -102,7 +103,7 @@ public class Heater extends Device implements TemperatureSetting, OnOff, DeviceS
             mqttMessage.setQos(0);
 
             //send command to mqtt
-            String topic = "heater/" + documentReference.getId();
+            String topic = String.format("heater/%s/%s/%s", userId, beanName, documentReference.getId());
             mqttAsyncClient.publish(topic, mqttMessage);
 
             //update firestore date
@@ -117,7 +118,9 @@ public class Heater extends Device implements TemperatureSetting, OnOff, DeviceS
             reportMap.put("activeThermostatMode", thermostatMode);
             reportMap.put("thermostatMode", thermostatMode);
             reportMap.put("on", "auto".equals(thermostatMode) ? true : false);
-            applicationEventPublisher.publishEvent(new ReportStateEvent(this, userId, reportMap));
+            applicationEventPublisher.publishEvent(new ReportStateEvent(this, userId, new HashMap() {{
+                put(deviceId, reportMap);
+            }}));
         } catch (Exception e) {
             log.error("", e);
         }
@@ -137,22 +140,24 @@ public class Heater extends Device implements TemperatureSetting, OnOff, DeviceS
             mqttMessage.setQos(0);
 
             //send command to mqtt
-            String topic = "heater/" + documentReference.getId();
+            String topic = String.format("heater/%s/%s/%s", userId, beanName, documentReference.getId());
             mqttAsyncClient.publish(topic, mqttMessage);
 
             //update firestore date
             Map<String, Object> updateMap = new HashMap<>();
-            updateMap.put("states.activeThermostatMode", on?"auto":"off");
-            updateMap.put("states.thermostatMode", on?"auto":"off");
+            updateMap.put("states.activeThermostatMode", on ? "auto" : "off");
+            updateMap.put("states.thermostatMode", on ? "auto" : "off");
             updateMap.put("states.on", on);
             documentReference.update(updateMap);
 
             // Report device state.
             Map<String, Object> reportMap = (Map<String, Object>) documentReference.get().get().get("states");
-            reportMap.put("activeThermostatMode", on?"auto":"off");
-            reportMap.put("thermostatMode", on?"auto":"off");
+            reportMap.put("activeThermostatMode", on ? "auto" : "off");
+            reportMap.put("thermostatMode", on ? "auto" : "off");
             reportMap.put("on", on);
-            applicationEventPublisher.publishEvent(new ReportStateEvent(this, userId, reportMap));
+            applicationEventPublisher.publishEvent(new ReportStateEvent(this, userId, new HashMap() {{
+                put(deviceId, reportMap);
+            }}));
         } catch (Exception e) {
             log.error("", e);
         }
@@ -199,7 +204,9 @@ public class Heater extends Device implements TemperatureSetting, OnOff, DeviceS
                 log.info("{} update states:{}", beanName, updateMap);
 
                 // Report device state.
-                applicationEventPublisher.publishEvent(new ReportStateEvent(this, userId, states));
+                applicationEventPublisher.publishEvent(new ReportStateEvent(this, userId, new HashMap() {{
+                    put(deviceId, states);
+                }}));
             }
         } catch (Exception e) {
             log.error("error update environment temperature", e);
