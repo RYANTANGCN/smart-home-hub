@@ -110,14 +110,14 @@ public class Heater extends Device implements TemperatureSetting, OnOff, DeviceS
             Map<String, Object> updateMap = new HashMap<>();
             updateMap.put("states.activeThermostatMode", thermostatMode);
             updateMap.put("states.thermostatMode", thermostatMode);
-            updateMap.put("on", "auto".equals(thermostatMode) ? true : false);
+//            updateMap.put("on", "auto".equals(thermostatMode) ? true : false);
             documentReference.update(updateMap);
 
             // Report device state.
             Map<String, Object> reportMap = (Map<String, Object>) documentReference.get().get().get("states");
             reportMap.put("activeThermostatMode", thermostatMode);
             reportMap.put("thermostatMode", thermostatMode);
-            reportMap.put("on", "auto".equals(thermostatMode) ? true : false);
+//            reportMap.put("on", "auto".equals(thermostatMode) ? true : false);
             applicationEventPublisher.publishEvent(new ReportStateEvent(this, userId, new HashMap() {{
                 put(deviceId, reportMap);
             }}));
