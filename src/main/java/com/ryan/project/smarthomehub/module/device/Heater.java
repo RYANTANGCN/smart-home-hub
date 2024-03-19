@@ -110,14 +110,14 @@ public class Heater extends Device implements TemperatureSetting, OnOff, DeviceS
             Map<String, Object> updateMap = new HashMap<>();
             updateMap.put("states.activeThermostatMode", thermostatMode);
             updateMap.put("states.thermostatMode", thermostatMode);
-//            updateMap.put("on", "auto".equals(thermostatMode) ? true : false);
+            updateMap.put("on", "auto".equals(thermostatMode) ? true : false);
             documentReference.update(updateMap);
 
             // Report device state.
             Map<String, Object> reportMap = (Map<String, Object>) documentReference.get().get().get("states");
             reportMap.put("activeThermostatMode", thermostatMode);
             reportMap.put("thermostatMode", thermostatMode);
-//            reportMap.put("on", "auto".equals(thermostatMode) ? true : false);
+            reportMap.put("on", "auto".equals(thermostatMode) ? true : false);
             applicationEventPublisher.publishEvent(new ReportStateEvent(this, userId, new HashMap() {{
                 put(deviceId, reportMap);
             }}));
@@ -196,7 +196,11 @@ public class Heater extends Device implements TemperatureSetting, OnOff, DeviceS
             }
             if (!onState.equals(lastOnState)) {
                 updateMap.put("states.on", onState);
+                updateMap.put("states.activeThermostatMode", onState ? "auto" : "off");
+                updateMap.put("states.thermostatMode", onState ? "auto" : "off");
                 states.put("on", onState);
+                states.put("activeThermostatMode", onState ? "auto" : "off");
+                states.put("thermostatMode", onState ? "auto" : "off");
             }
             if (!updateMap.isEmpty()) {
                 //update firestore database
