@@ -1,0 +1,220 @@
+###
+POST http://localhost:8080/smarthome
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+
+{
+  "inputs": [
+    {
+      "context": {
+        "locale_country": "US",
+        "locale_language": "en"
+      },
+      "intent": "action.devices.EXECUTE",
+      "payload": {
+        "commands": [
+          {
+            "devices": [
+              {
+                "id": "{{device_id}}"
+              }
+            ],
+            "execution": [
+              {
+                "command": "action.devices.commands.OnOff",
+                "params": {
+                  "on": false
+                }
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "requestId": "{{$random.uuid}}"
+}
+
+###
+POST http://localhost:8080/smarthome
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+
+{
+  "inputs": [
+    {
+      "context": {
+        "locale_country": "US",
+        "locale_language": "en"
+      },
+      "intent": "action.devices.EXECUTE",
+      "payload": {
+        "commands": [
+          {
+            "devices": [
+              {
+                "id": "{{device_id}}"
+              }
+            ],
+            "execution": [
+              {
+                "command": "action.devices.commands.Dispense",
+                "params": {
+                  "amount": 2,
+                  "item": "cat_food_key",
+                  "unit": "CUPS"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "requestId": "{{$random.uuid}}"
+}
+
+###
+POST http://localhost:8080/smarthome
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+
+{
+  "inputs": [
+    {
+      "context": {
+        "locale_country": "US",
+        "locale_language": "en"
+      },
+      "intent": "action.devices.EXECUTE",
+      "payload": {
+        "commands": [
+          {
+            "devices": [
+              {
+                "id": "{{device_id}}"
+              }
+            ],
+            "execution": [
+              {
+                "command": "action.devices.commands.Dispense",
+                "params": {
+                  "presetName": "cat_bowl"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "requestId": "{{$random.uuid}}"
+}
+
+###
+POST http://localhost:8080/smarthome
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+
+{
+  "inputs": [
+    {
+      "context": {
+        "locale_country": "CN",
+        "locale_language": "zh"
+      },
+      "intent": "action.devices.EXECUTE",
+      "payload": {
+        "commands": [
+          {
+            "devices": [
+              {
+                "id": "{{device_id}}"
+              }
+            ],
+            "execution": [
+              {
+                "command": "action.devices.commands.OpenClose",
+                "params": {
+                  "openPercent": 100
+                }
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "requestId": "{{$random.uuid}}"
+}
+
+###
+POST http://localhost:8080/smarthome
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+
+{
+  "inputs": [
+    {
+      "context": {
+        "locale_country": "US",
+        "locale_language": "en"
+      },
+      "intent": "action.devices.EXECUTE",
+      "payload": {
+        "commands": [
+          {
+            "devices": [
+              {
+                "id": "{{device_id}}"
+              }
+            ],
+            "execution": [
+              {
+                "command": "action.devices.commands.StartStop",
+                "params": {
+                  "start": true
+                }
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "requestId": "{{$random.uuid}}"
+}
+
+###
+POST http://localhost:8080/smarthome
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+
+{
+  "inputs": [
+    {
+      "context": {
+        "locale_country": "US",
+        "locale_language": "en"
+      },
+      "intent": "action.devices.EXECUTE",
+      "payload": {
+        "commands": [
+          {
+            "devices": [
+              {
+                "id": "{{device_id}}"
+              }
+            ],
+            "execution": [
+              {
+                "command": "action.devices.commands.Dock"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "requestId": "{{$random.uuid}}"
+}

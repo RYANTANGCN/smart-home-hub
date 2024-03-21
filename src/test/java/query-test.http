@@ -1,0 +1,21 @@
+###
+POST http://localhost:8080/smarthome
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+
+{
+  "inputs": [
+    {
+      "intent": "action.devices.QUERY",
+      "payload": {
+        "devices": [
+          {
+            "id": "{{device_id}}"
+          }
+        ]
+      }
+    }
+  ],
+  "requestId": "{{$random.uuid}}"
+}
+

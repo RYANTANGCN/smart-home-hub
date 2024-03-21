@@ -1,0 +1,13 @@
+###
+POST http://localhost:8080/smarthome
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+
+{
+  "inputs": [
+    {
+      "intent": "action.devices.SYNC"
+    }
+  ],
+  "requestId": "{{$random.uuid}}"
+}
