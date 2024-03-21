@@ -72,6 +72,14 @@ public class Light extends Device implements OnOff, Brightness, DeviceStateRepor
 
             //update firestore date
             documentReference.update("states.on", on);
+
+            //report state
+            DocumentSnapshot documentSnapshot = documentReference.get().get();
+            Map<String, Object> states = (Map<String, Object>) documentSnapshot.get("states");
+            states.put("on", on);
+            Map<String, Object> updateStates = new HashMap<>();
+            updateStates.put(deviceId, states);
+            applicationEventPublisher.publishEvent(new ReportStateEvent(this, userId, updateStates));
         } catch (Exception e) {
             log.error("", e);
         }
@@ -98,6 +106,14 @@ public class Light extends Device implements OnOff, Brightness, DeviceStateRepor
 
             //update firestore date
             documentReference.update("states.brightness", brightness);
+
+            //report state
+            DocumentSnapshot documentSnapshot = documentReference.get().get();
+            Map<String, Object> states = (Map<String, Object>) documentSnapshot.get("states");
+            states.put("brightness", brightness);
+            Map<String, Object> updateStates = new HashMap<>();
+            updateStates.put(deviceId, states);
+            applicationEventPublisher.publishEvent(new ReportStateEvent(this, userId, updateStates));
         } catch (Exception e) {
             log.error("", e);
         }
