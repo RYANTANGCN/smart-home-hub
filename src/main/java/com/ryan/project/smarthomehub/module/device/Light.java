@@ -62,7 +62,7 @@ public class Light extends Device implements OnOff, Brightness, DeviceStateRepor
         //set brightness instead of turning on to keep the same brightness last time
         if (on) {
             try {
-                Integer brightness = (Integer) documentReference.get().get().get("states.brightness");
+                Long brightness = (Long) documentReference.get().get().get("states.brightness");
                 map.put("brightness", brightness);
             } catch (Exception e) {
                 log.error("get brightness state error", e);
