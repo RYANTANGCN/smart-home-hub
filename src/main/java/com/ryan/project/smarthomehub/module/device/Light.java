@@ -59,7 +59,17 @@ public class Light extends Device implements OnOff, Brightness, DeviceStateRepor
         String deviceId = documentReference.getId();
         String userId = documentReference.getParent().getParent().getId();
         Map<String, Object> map = new HashMap<>();
-        map.put("on", on);
+        //set brightness instead of turning on to keep the same brightness last time
+        if (on) {
+            try {
+                Integer brightness = (Integer) documentReference.get().get().get("states.brightness");
+                map.put("brightness", brightness);
+            } catch (Exception e) {
+                log.error("get brightness state error", e);
+            }
+        } else {
+            map.put("on", on);
+        }
 
         try {
             //mqtt
