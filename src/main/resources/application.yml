@@ -1,9 +1,9 @@
 spring:
   datasource:
-    url: jdbc:mariadb://${MYSQL_HOST}/smart_home_hub?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8&useSSL=false&&useInnoDB=true
+    url: jdbc:mysql://${MYSQL_HOST}/smart_home_hub?allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8&useSSL=false&&useInnoDB=true
     username: ${MYSQL_USERNAME}
     password: ${MYSQL_PASSWORD}
-    driver-class-name: org.mariadb.jdbc.Driver
+    driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
       ddl-auto: update
