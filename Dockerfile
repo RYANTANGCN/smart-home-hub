@@ -4,4 +4,4 @@ EXPOSE 8080
 WORKDIR /tmp
 COPY build/libs/smart-home-hub-1.0-SNAPSHOT.jar app.jar
 RUN mkdir credentials
-CMD java -Ddefault.feed.cup=4 -jar app.jar
+CMD java -Ddefault.feed.cup=4 -jar app.jar --server.address=127.0.0.1 --server.port=8080
