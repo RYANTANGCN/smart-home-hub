@@ -21,7 +21,7 @@ public class ClientStore {
 
     private boolean isDelete;
 
-    private LocalDateTime createTime;
+    private LocalDateTime createTime = LocalDateTime.now();
 
-    private LocalDateTime updateTime;
+    private LocalDateTime updateTime = LocalDateTime.now();
  }

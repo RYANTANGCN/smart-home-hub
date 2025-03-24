@@ -42,8 +42,8 @@ public class TokenStore {
 
     private String remark;
 
-    private LocalDateTime createTime;
+    private LocalDateTime createTime = LocalDateTime.now();
 
-    private LocalDateTime updateTime;
+    private LocalDateTime updateTime = LocalDateTime.now();
 
 }
