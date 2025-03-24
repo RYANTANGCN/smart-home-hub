@@ -42,8 +42,10 @@ public class TokenStore {
 
     private String remark;
 
+    @Builder.Default
     private LocalDateTime createTime = LocalDateTime.now();
 
+    @Builder.Default
     private LocalDateTime updateTime = LocalDateTime.now();
 
 }
